@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+const path = require("path");
 app.use(cors());
 app.use(bodyParser.json());
 app.use((req, res, next) =>
@@ -20,6 +21,11 @@ app.use((req, res, next) =>
     next();
 });
 
+app.use(express.static(path.join(__dirname, "frontend/dist")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
+});
 const MongoClient = require('mongodb').MongoClient;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
