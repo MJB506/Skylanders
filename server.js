@@ -27,5 +27,8 @@ client.connect();
 var api = require('./api');
 api.setApp(app, client);
 
+app.get("/", (req, res) => {
+    res.send("Cards API is running");
+});
 
 app.listen(5000); // start Node + Express server on port 5000
