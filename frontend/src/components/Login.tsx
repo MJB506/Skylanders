@@ -8,8 +8,8 @@ function Login()
 {
     const navigate = useNavigate();
     const [message,setMessage] = useState('');
-    const [loginName,setLoginName] = React.useState('');
-    const [loginPassword,setPassword] = React.useState('');
+    const [loginName,setLoginName] = useState('');
+    const [loginPassword,setPassword] = useState('');
 
     async function doLogin(event:any) : Promise<void>
     {
