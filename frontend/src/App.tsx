@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import CardPage from './pages/CardPage';
 import SignupPage from './pages/SignupPage';
-import EmailConfirmationPage from './pages/EmailConfirmationpage';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
 
 function App() {
   return (
