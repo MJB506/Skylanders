@@ -2,6 +2,31 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { buildPath } from './Path';
 
+async function resendCode()
+{
+    const response = await fetch(
+        buildPath('api/resendverification'),
+        {
+            method: 'POST',
+            headers:
+            {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        }
+    );
+
+    const res = await response.json();
+
+    if (res.error)
+    {
+        setMessage(res.error);
+        return;
+    }
+
+    setMessage("A new verification code has been sent.");
+}
+
 function EmailConfirmation()
 {
     const navigate = useNavigate();
@@ -92,6 +117,13 @@ function EmailConfirmation()
                 className="buttons"
                 value="Verify Email"
                 onClick={verifyEmail}
+            />
+
+            <input
+                type="button"
+                className="buttons"
+                value="Send New Code"
+                onClick={resendCode}
             />
 
             <br /><br />
