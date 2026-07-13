@@ -31,10 +31,10 @@ exports.setApp = function(app, client)
     {
         const {username, password, email } = req.body;
         
-        const db = client.db('COP4331Cards');
+        const db = client.db('Skylanders');
         const users = db.collection('Users');
 
-        const existingUser = await users.findOne({ $or: [{ Login: username }, { Email: email }] });
+        const existingUser = await users.findOne({ $or: [{ Username: username }, { Email: email }] });
 
         if (existingUser)
         {
@@ -49,7 +49,7 @@ exports.setApp = function(app, client)
         {
             FirstName: '',
             LastName: '',
-            Login: username,
+            Username: username,
             Password: password,
             Email: email,
             IsVerified: false,
@@ -82,27 +82,19 @@ exports.setApp = function(app, client)
     //  updated: check isVerified first
     app.post('/api/login', async (req, res, next) =>
 {
-    console.log('LOGIN: endpoint hit');
-
     const { login, password } = req.body;
-    console.log('LOGIN: body received', { login, password });
 
     try
     {
-        const db = client.db('COP4331Cards');
-        console.log('LOGIN: database selected');
+        const db = client.db('Skylanders');
 
         const user = await db.collection('Users').findOne({
-            Login: login,
+            Username: login,
             Password: password
         });
 
-        console.log('LOGIN: database result', user);
-
         if (!user)
         {
-            console.log('LOGIN: invalid credentials');
-
             return res.status(200).json({
                 error: 'Login/Password incorrect'
             });
@@ -110,23 +102,18 @@ exports.setApp = function(app, client)
 
         if (user.IsVerified !== true)
         {
-            console.log('LOGIN: user not verified');
-
             return res.status(200).json({
                 error: 'Email not verified.'
             });
         }
 
         const userId = user._id.toString();
-        console.log('LOGIN: before token creation', userId);
 
         const ret = token.createToken(
             user.FirstName,
             user.LastName,
             userId
         );
-
-        console.log('LOGIN: token created', ret);
 
         return res.status(200).json({
             userId,
@@ -135,8 +122,6 @@ exports.setApp = function(app, client)
     }
     catch(e)
     {
-        console.error('LOGIN ERROR:', e);
-
         return res.status(500).json({
             error: e.toString()
         });
@@ -160,7 +145,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
             const ownedFigures = await db.collection('Collection').find({
                     '_id.UserId': new ObjectId(userId)
                 }).toArray();
@@ -202,7 +187,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
             const users = db.collection('Users');
 
             const user = await users.findOne({
@@ -255,7 +240,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
             const wishlistFigures = await db.collection('Wishlist').find({
                 '_id.UserId': new ObjectId(userId)
             }).toArray();
@@ -301,7 +286,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             const userObjectId = new ObjectId(userId);
             const figureObjectId = new ObjectId(figureId);
@@ -353,7 +338,7 @@ exports.setApp = function(app, client)
 
     try
     {
-        const db = client.db('COP4331Cards');
+        const db = client.db('Skylanders');
         await db.collection('Wishlist').deleteOne({
             _id: {
                 UserId: new ObjectId(userId),
@@ -390,7 +375,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             await db.collection('Collection').deleteOne({
                     _id: {
@@ -422,7 +407,7 @@ exports.setApp = function(app, client)
         var error = '';
         const { search, jwtToken } = req.body;
         var _search = search.trim();
-        const db = client.db('COP4331Cards');
+        const db = client.db('Skylanders');
         const results = await db.collection('Figure').find({
             Name:
             {
@@ -474,7 +459,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             const userObjectId = new ObjectId(userId);
             const figureObjectId = new ObjectId(figureId);
@@ -532,11 +517,11 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             const results = await db.collection('Users').find({
                 _id: { $ne: new ObjectId(userId) },
-                Login:
+                Username:
                 {
                     $regex: _search + '.*',
                     $options: 'i'
@@ -547,7 +532,7 @@ exports.setApp = function(app, client)
             {
                 _ret.push({
                     id: results[i]._id,
-                    username: results[i].Login,
+                    username: results[i].Username,
                     firstName: results[i].FirstName,
                     lastName: results[i].LastName
                 });
@@ -586,7 +571,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             const userObjectId = new ObjectId(userId);
             const friendObjectId = new ObjectId(friendId);
@@ -654,7 +639,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             const result = await db.collection('FriendsList').updateOne(
                 {
@@ -670,6 +655,53 @@ exports.setApp = function(app, client)
             );
 
             if (result.matchedCount === 0)
+            {
+                return res.status(200).json({
+                    error: 'Pending friend request not found',
+                    jwtToken: token.refresh(jwtToken)
+                });
+            }
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+
+        const refreshedToken = token.refresh(jwtToken);
+
+        res.status(200).json({
+            error,
+            jwtToken: refreshedToken
+        });
+    });
+
+    //  new
+    app.post('/api/denyfriendrequest', async (req, res, next) =>
+    {
+        // incoming: userId, friendId, jwtToken
+        // outgoing: error
+        var error = '';
+        const { userId, friendId, jwtToken } = req.body;
+
+        if (token.isExpired(jwtToken))
+        {
+            return res.status(200).json({
+                error: 'The JWT is no longer valid',
+                jwtToken: ''
+            });
+        }
+
+        try
+        {
+            const db = client.db('Skylanders');
+
+            const result = await db.collection('FriendsList').deleteOne({
+                '_id.UserId': new ObjectId(friendId),
+                '_id.FriendId': new ObjectId(userId),
+                Status: 'Pending'
+            });
+
+            if (result.deletedCount === 0)
             {
                 return res.status(200).json({
                     error: 'Pending friend request not found',
@@ -708,7 +740,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
 
             const userObjectId = new ObjectId(userId);
             const friendObjectId = new ObjectId(friendId);
@@ -749,7 +781,7 @@ exports.setApp = function(app, client)
 
         try
         {
-            const db = client.db('COP4331Cards');
+            const db = client.db('Skylanders');
             const users = db.collection('Users');
 
             const user = await users.findOne({
@@ -791,79 +823,126 @@ exports.setApp = function(app, client)
         });
     });
 
-
-
-    //  outdated endpoints from MERN A
-    app.post('/api/searchcards', async (req, res, next) =>
+    //  new
+    app.post('/api/resetpassword', async (req, res, next) =>
     {
-        // incoming: userId, search
-        // outgoing: results[], error
-        var error = '';
-        const { userId, search, jwtToken } = req.body;
-        var _search = search.trim();
-        const db = client.db('COP4331Cards');
-        const results = await db.collection('Cards').find({
-            UserId: userId,
-            Card:
-            {
-                $regex: _search + '.*',
-                $options: 'i'
-            }
-        }).toArray();
-        var _ret = [];
-
-        if (token.isExpired(jwtToken))
-        {
-            return res.status(200).json({
-                results: _ret,
-                error: 'The JWT is no longer valid',
-                jwtToken: ''
-            });
-        }
-
-        for( var i=0; i<results.length; i++ )
-        {
-            _ret.push( results[i].Card );
-        }
-
-        const refreshedToken =
-            token.refresh(jwtToken);
-
-        res.status(200).json({
-            results: _ret,
-            error,
-            jwtToken: refreshedToken
-        });
-    });
-
-    app.post('/api/addcard', async (req, res, next) =>
-    {
-        // incoming: userId, color
+        // incoming: email, recoveryCode, newPassword
         // outgoing: error
-        const { userId, card, jwtToken } = req.body;
-        const newCard = {Card:card,UserId:userId};
         var error = '';
+        const { email, recoveryCode, newPassword } = req.body;
 
-        if (token.isExpired(jwtToken))
-        {
-            return res.status(200).json({
-                error: 'The JWT is no longer valid',
-                jwtToken: ''
-            });
-        }
         try
         {
-            const db = client.db('COP4331Cards');
-            const result = await db.collection('Cards').insertOne(newCard);
+            const db = client.db('Skylanders');
+            const users = db.collection('Users');
+
+            const user = await users.findOne({
+                Email: email,
+                RecoveryCode: recoveryCode
+            });
+
+            if (!user)
+            {
+                return res.status(200).json({
+                    error: 'Invalid recovery code'
+                });
+            }
+
+            await users.updateOne(
+                { Email: email },
+                {
+                    $set: {
+                        Password: newPassword,
+                        RecoveryCode: ''
+                    }
+                }
+            );
         }
         catch(e)
         {
             error = e.toString();
         }
-        const refreshedToken =
-            token.refresh(jwtToken);
 
         res.status(200).json({
+            error
+        });
+    });
+
+    //  new
+    app.post('/api/getfriendslist', async (req, res, next) =>
+    {
+        // incoming: userId, jwtToken
+        // outgoing: friends[], pending[], error
+        var error = '';
+        const { userId, jwtToken } = req.body;
+        var friends = [];
+        var pending = [];
+
+        if (token.isExpired(jwtToken))
+        {
+            return res.status(200).json({
+                friends,
+                pending,
+                error: 'The JWT is no longer valid',
+                jwtToken: ''
+            });
+        }
+
+        try
+        {
+            const db = client.db('Skylanders');
+            const userObjectId = new ObjectId(userId);
+
+            const entries = await db.collection('FriendsList').find({
+                $or: [
+                    { '_id.UserId': userObjectId },
+                    { '_id.FriendId': userObjectId }
+                ]
+            }).toArray();
+
+            for (var i = 0; i < entries.length; i++)
+            {
+                const entry = entries[i];
+                const otherUserId = entry._id.UserId.equals(userObjectId)
+                    ? entry._id.FriendId
+                    : entry._id.UserId;
+
+                const otherUser = await db.collection('Users').findOne(
+                    { _id: otherUserId },
+                    { projection: { Username: 1, FirstName: 1, LastName: 1 } }
+                );
+
+                const userInfo = {
+                    id: otherUserId,
+                    username: otherUser ? otherUser.Username : '',
+                    firstName: otherUser ? otherUser.FirstName : '',
+                    lastName: otherUser ? otherUser.LastName : ''
+                };
+
+                if (entry.Status === 'Accepted')
+                {
+                    friends.push(userInfo);
+                }
+                else if (entry.Status === 'Pending' && entry._id.UserId.equals(userObjectId))
+                {
+                    pending.push({ ...userInfo, direction: 'sent' });
+                }
+                else if (entry.Status === 'Pending' && entry._id.FriendId.equals(userObjectId))
+                {
+                    pending.push({ ...userInfo, direction: 'received' });
+                }
+            }
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+
+        const refreshedToken = token.refresh(jwtToken);
+
+        res.status(200).json({
+            friends,
+            pending,
             error,
             jwtToken: refreshedToken
         });

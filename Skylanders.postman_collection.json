@@ -1,0 +1,260 @@
+{
+  "info": {
+    "name": "Skylanders API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/register", "host": ["{{baseUrl}}"], "path": ["api", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"\",\n  \"password\": \"\",\n  \"email\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/login", "host": ["{{baseUrl}}"], "path": ["api", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"\",\n  \"password\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/verifyemail", "host": ["{{baseUrl}}"], "path": ["api", "verifyemail"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"\",\n  \"code\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Recover Account",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/recoveraccount", "host": ["{{baseUrl}}"], "path": ["api", "recoveraccount"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/resetpassword", "host": ["{{baseUrl}}"], "path": ["api", "resetpassword"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"\",\n  \"recoveryCode\": \"\",\n  \"newPassword\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/searchusers", "host": ["{{baseUrl}}"], "path": ["api", "searchusers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"search\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Friends",
+      "item": [
+        {
+          "name": "Send Friend Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/sendfriendrequest", "host": ["{{baseUrl}}"], "path": ["api", "sendfriendrequest"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"friendId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Accept Friend Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/acceptfriendrequest", "host": ["{{baseUrl}}"], "path": ["api", "acceptfriendrequest"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"friendId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Deny Friend Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/denyfriendrequest", "host": ["{{baseUrl}}"], "path": ["api", "denyfriendrequest"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"friendId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Friend",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/removefriend", "host": ["{{baseUrl}}"], "path": ["api", "removefriend"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"friendId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Friends List",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/getfriendslist", "host": ["{{baseUrl}}"], "path": ["api", "getfriendslist"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Figures",
+      "item": [
+        {
+          "name": "Search Figures",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/searchfigures", "host": ["{{baseUrl}}"], "path": ["api", "searchfigures"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"search\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Collection",
+      "item": [
+        {
+          "name": "Get Collection",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/getcollection", "host": ["{{baseUrl}}"], "path": ["api", "getcollection"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Add to Collection",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/addtocollection", "host": ["{{baseUrl}}"], "path": ["api", "addtocollection"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"figureId\": \"\",\n  \"boxed\": false,\n  \"quantity\": 1,\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove from Collection",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/removefromcollection", "host": ["{{baseUrl}}"], "path": ["api", "removefromcollection"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"figureId\": \"\",\n  \"boxed\": false,\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wishlist",
+      "item": [
+        {
+          "name": "Get Wishlist",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/getwishlist", "host": ["{{baseUrl}}"], "path": ["api", "getwishlist"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Add to Wishlist",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/addtowishlist", "host": ["{{baseUrl}}"], "path": ["api", "addtowishlist"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"figureId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove from Wishlist",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/removefromwishlist", "host": ["{{baseUrl}}"], "path": ["api", "removefromwishlist"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"\",\n  \"figureId\": \"\",\n  \"jwtToken\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
