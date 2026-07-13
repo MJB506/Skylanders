@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { buildPath } from './Path';
+import { useNavigate } from 'react-router-dom';
 
 function Signup()
 {
+    const navigate = useNavigate();
     const [message, setMessage] = useState('');
 
     const [username, setUsername] = useState('');
@@ -78,7 +80,7 @@ function Signup()
             else
             {
                 alert("Registration successful! Please verify your email before logging in.");
-                window.location.href = '/';
+                navigate('/');
             }
         }
         catch (error: any)
@@ -132,9 +134,19 @@ function Signup()
                 value="Create Account"
                 onClick={doSignup}
             />
-
+            
             <br /><br />
-
+            
+            <input
+                type="button"
+                id="loginRedirectButton"
+                className="buttons"
+                value="Already have an account? Log in!"
+                onClick={() => navigate('/')}
+            />
+            
+            <br /><br />
+            
             <span id="signupResult">{message}</span>
 
         </div>
