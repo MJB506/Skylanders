@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { buildPath } from './Path';
 import { storeToken } from '../tokenStorage';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 function Login()
 {
+    const navigate = useNavigate();
     const [message,setMessage] = useState('');
     const [loginName,setLoginName] = React.useState('');
     const [loginPassword,setPassword] = React.useState('');
@@ -55,7 +57,7 @@ function Login()
                     JSON.stringify(user)
                 );
 
-                window.location.href = '/cards';
+                navigate('/cards');
             }
         }
         catch(error:any)
@@ -69,8 +71,26 @@ function Login()
         <span id="inner-title">PLEASE LOG IN</span><br />
         <input type="text" id="loginName" placeholder="Username"onChange={handleSetLoginName} /><br></br>
         <input type="password" id="loginPassword" placeholder="Password"onChange={handleSetPassword} /><br></br>
-        <input type="submit" id="loginButton" className="buttons" value = "Do It"
-        onClick={doLogin} />
+        <input
+            type="submit"
+            id="loginButton"
+            className="buttons"
+            value="Do It"
+            onClick={doLogin}
+        />
+        
+        <br /><br />
+        
+        <input
+            type="button"
+            id="signupRedirectButton"
+            className="buttons"
+            value="Don't have an account? Sign up!"
+            onClick={() => navigate('/signup')}
+        />
+        
+        <br /><br />
+        
         <span id="loginResult">{message}</span>
         </div>
     );
