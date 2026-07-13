@@ -30,7 +30,20 @@ function Login()
                 }
             );
             var res = JSON.parse(await response.text());
-            if( !res.accessToken )
+            if (res.needsVerification)
+            {
+                navigate('/verify-email',
+                {
+                    state:
+                    {
+                        email: res.email
+                    }
+                });
+            
+                return;
+            }
+            
+            if (!res.accessToken)
             {
                 setMessage(res.error || "Login failed");
                 return;
