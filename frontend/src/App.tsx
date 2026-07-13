@@ -13,6 +13,7 @@ function App() {
         <Route path="/cards" element={<CardPage />} />
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/verify-email" element={<EmailConfirmationPage />} />
       </Routes>
     </BrowserRouter>
   );
