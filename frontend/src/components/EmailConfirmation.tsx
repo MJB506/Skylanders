@@ -32,7 +32,7 @@ function EmailConfirmation()
         try
         {
             const response = await fetch(
-                buildPath('api/verify-email'),
+                buildPath('api/verifyemail'),
                 {
                     method: 'POST',
                     headers:
