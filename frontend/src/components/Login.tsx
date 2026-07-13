@@ -30,7 +30,8 @@ function Login()
             var res = JSON.parse(await response.text());
             if( !res.accessToken )
             {
-                setMessage('User/Password combination incorrect');
+                setMessage(res.error || "Login failed");
+                return;
             }
             else
             {
