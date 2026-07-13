@@ -80,7 +80,12 @@ function Signup()
             else
             {
                 alert("Registration successful! Please verify your email before logging in.");
-                navigate('/');
+                navigate('/verify-email', {
+                    state:
+                    {
+                        email: email
+                    }
+                });
             }
         }
         catch (error: any)
