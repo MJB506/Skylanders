@@ -105,6 +105,15 @@ function Login()
         />
         
         <br /><br />
+
+        <input
+            type="button"
+            className="buttons"
+            value="Forgot your password?"
+            onClick={() => navigate('/recover-account')}
+        />
+
+        <br /><br />
         
         <span id="loginResult">{message}</span>
         </div>
