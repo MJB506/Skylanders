@@ -1,6 +1,6 @@
 import PageTitle from '../components/PageTitle';
 import LoggedInName from '../components/LoggedInName';
-import WishlistUI from '../components/Wishlist';
+import Wishlist from '../components/Wishlist';
 
 const WishlistPage = () =>
 {
