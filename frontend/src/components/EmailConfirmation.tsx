@@ -114,7 +114,6 @@ function EmailConfirmation()
             <br /><br />
 
             <input
-                <input
                 type="text"
                 maxLength={6}
                 inputMode="numeric"
