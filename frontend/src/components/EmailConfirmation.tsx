@@ -55,9 +55,6 @@ function EmailConfirmation()
                 setMessage(res.error);
                 return;
             }
-
-            alert("Email verified successfully!");
-
             navigate('/');
         }
         catch (error: any)
