@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { searchFigures } from '../api/figuresApi';
 import { addToWishlist, getWishlist, removeFromWishlist } from '../api/wishlistApi';
 import type { Figure } from '../api/types';
@@ -6,7 +6,7 @@ import type { Figure } from '../api/types';
 function WishlistUI()
 {
     const [message, setMessage] = useState('');
-    const [search, setSearchValue] = React.useState('');
+    const [search, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<Figure[]>([]);
     const [wishlist, setWishlist] = useState<Figure[]>([]);
 
