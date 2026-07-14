@@ -103,17 +103,18 @@ function Login()
             value="Don't have an account? Sign up!"
             onClick={() => navigate('/signup')}
         />
-        
-        <br /><br />
 
+        <br /><br />
         <input
             type="button"
             className="buttons"
             value="Forgot your password?"
             onClick={() => navigate('/recover-account')}
         />
-
+            
         <br /><br />
+
+        
         
         <span id="loginResult">{message}</span>
         </div>
