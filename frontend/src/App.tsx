@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage';
 import CardPage from './pages/CardPage';
 import SignupPage from './pages/SignupPage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
+import RecoverAccountPage from './pages/RecoverAccountPage';
+import PasswordResetPage from './pages/PasswordResetPage';
 
 function App() {
   return (
