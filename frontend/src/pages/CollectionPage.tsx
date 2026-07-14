@@ -1,6 +1,6 @@
 import PageTitle from '../components/PageTitle';
 import LoggedInName from '../components/LoggedInName';
-import CollectionUI from '../components/CollectionUI';
+import CollectionUI from '../components/Collection';
 
 const CollectionPage = () =>
 {
