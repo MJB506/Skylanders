@@ -7,6 +7,10 @@ import SignupPage from './pages/SignupPage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import RecoverAccountPage from './pages/RecoverAccountPage';
 import PasswordResetPage from './pages/PasswordResetPage';
+import CollectionPage from './pages/CollectionPage';
+import WishlistPage from './pages/WishlistPage';
+import FriendsPage from './pages/FriendsPage';
+
 
 function App() {
   return (
@@ -14,6 +18,9 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/cards" element={<CardPage />} />
+        <Route path="/collection" element={<CollectionPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/friends" element={<FriendsPage />} />
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<EmailConfirmationPage />} />
