@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { searchFigures } from '../api/figuresApi';
-import { addToWishlist, getWishlist, removeFromWishlist } from '../api/wishlistApi';
-import type { Figure } from '../api/types';
+import { useState } from 'react';
+import { buildPath } from './Path';
+import { storeToken } from '../tokenStorage';
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 function WishlistUI()
 {
