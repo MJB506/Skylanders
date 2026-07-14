@@ -71,8 +71,6 @@ function PasswordReset()
 
             sessionStorage.removeItem("resetEmail");
 
-            alert("Password changed successfully!");
-
             navigate('/');
         }
         catch(error: any)
