@@ -15,6 +15,8 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<EmailConfirmationPage />} />
+        <Route path="/recover-account" element={<RecoverAccountPage />} />
+        <Route path="/reset-password" element={<PasswordResetPage />} />
       </Routes>
     </BrowserRouter>
   );
