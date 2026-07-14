@@ -29,7 +29,9 @@ function Login()
                     }
                 }
             );
-            var res = JSON.parse(await response.text());
+            //var res = JSON.parse(await response.text());
+            const res = await response.json();
+            console.log("Login response:", res);
             if (res.needsVerification)
             {
                 navigate('/verify-email',
