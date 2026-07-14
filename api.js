@@ -81,73 +81,73 @@ exports.setApp = function(app, client)
 
     //  updated: check isVerified first
     app.post('/api/login', async (req, res, next) =>
-{
-    const { login, password } = req.body;
-
-    try
     {
-        const db = client.db('Skylanders');
-
-        const user = await db.collection('Users').findOne({
-            Username: login,
-            Password: password
-        });
-
-        if (!user)
+        const { login, password } = req.body;
+    
+        try
         {
-            return res.status(200).json({
-                error: 'Login/Password incorrect'
+            const db = client.db('Skylanders');
+    
+            const user = await db.collection('Users').findOne({
+                Username: login,
+                Password: password
             });
-        }
-
-        if (user.IsVerified !== true)
-        {
-            const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-        
-            await db.collection('Users').updateOne(
-                { _id: user._id },
-                {
-                    $set:
+    
+            if (!user)
+            {
+                return res.status(200).json({
+                    error: 'Login/Password incorrect'
+                });
+            }
+    
+            if (user.IsVerified !== true)
+            {
+                const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+                await db.collection('Users').updateOne(
+                    { _id: user._id },
                     {
-                        Code: newCode,
-                        CodeCreated: new Date()
+                        $set:
+                        {
+                            Code: newCode,
+                            CodeCreated: new Date()
+                        }
                     }
-                }
+                );
+            
+                await sendEmail(
+                    user.Email,
+                    'Verify your Skylanders account',
+                    'Your verification code is: ' + newCode
+                );
+            
+                return res.status(200).json({
+                    error: 'Email not verified.',
+                    needsVerification: true,
+                    email: user.Email
+                });
+            }
+    
+            const userId = user._id.toString();
+    
+            const ret = token.createToken(
+                user.FirstName,
+                user.LastName,
+                userId
             );
-        
-            await sendEmail(
-                user.Email,
-                'Verify your Skylanders account',
-                'Your verification code is: ' + newCode
-            );
-        
+    
             return res.status(200).json({
-                error: 'Email not verified.',
-                needsVerification: true,
-                email: user.Email
+                userId,
+                ...ret
             });
         }
-
-        const userId = user._id.toString();
-
-        const ret = token.createToken(
-            user.FirstName,
-            user.LastName,
-            userId
-        );
-
-        return res.status(200).json({
-            userId,
-            ...ret
-        });
-    }
-    catch(e)
-    {
-        return res.status(500).json({
-            error: e.toString()
-        });
-    }
-});
+        catch(e)
+        {
+            return res.status(500).json({
+                error: e.toString()
+            });
+        }
+    });
 
    //  viewcollection
     app.post('/api/getcollection', async (req, res, next) =>
