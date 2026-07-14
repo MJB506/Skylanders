@@ -2,38 +2,6 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { buildPath } from './Path';
 
-async function resendCode()
-{
-    try
-    {
-        const response = await fetch(
-            buildPath('api/resendverification'),
-            {
-                method: 'POST',
-                headers:
-                {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            }
-        );
-
-        const res = await response.json();
-
-        if (res.error)
-        {
-            setMessage(res.error);
-            return;
-        }
-
-        setMessage("A new verification code has been sent.");
-    }
-    catch (error: any)
-    {
-        setMessage(error.toString());
-    }
-}
-
 function EmailConfirmation()
 {
     const navigate = useNavigate();
@@ -91,6 +59,38 @@ function EmailConfirmation()
             alert("Email verified successfully!");
 
             navigate('/');
+        }
+        catch (error: any)
+        {
+            setMessage(error.toString());
+        }
+    }
+
+    async function resendCode(): Promise<void>
+    {
+        try
+        {
+            const response = await fetch(
+                buildPath('api/resendverification'),
+                {
+                    method: 'POST',
+                    headers:
+                    {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                }
+            );
+    
+            const res = await response.json();
+    
+            if (res.error)
+            {
+                setMessage(res.error);
+                return;
+            }
+    
+            setMessage("A new verification code has been sent.");
         }
         catch (error: any)
         {
