@@ -149,6 +149,165 @@ exports.setApp = function(app, client)
         }
     });
 
+    app.post('/api/requestpasswordreset', async (req, res, next) =>
+    {
+        const { email } = req.body;
+        let error = '';
+    
+        try
+        {
+            const db = client.db('Skylanders');
+            const users = db.collection('Users');
+    
+            const user = await users.findOne({
+                Email: email
+            });
+    
+            if (!user)
+            {
+                return res.status(200).json({
+                    error: 'No account exists with that email.'
+                });
+            }
+    
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+    
+            await users.updateOne(
+                { Email: email },
+                {
+                    $set:
+                    {
+                        PasswordResetCode: code,
+                        PasswordResetCreated: new Date()
+                    }
+                }
+            );
+    
+            await sendEmail(
+                email,
+                'Skylanders Password Reset',
+                'Your password reset code is: ' + code
+            );
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+    
+        res.status(200).json({
+            error
+        });
+    });
+
+    app.post('/api/resetpassword', async (req, res, next) =>
+    {
+        const { email, code, password } = req.body;
+        let error = '';
+    
+        try
+        {
+            const db = client.db('Skylanders');
+            const users = db.collection('Users');
+    
+            const user = await users.findOne({
+                Email: email,
+                PasswordResetCode: code
+            });
+    
+            if (!user)
+            {
+                return res.status(200).json({
+                    error: 'Invalid verification code.'
+                });
+            }
+    
+            const expiration = 15 * 60 * 1000;
+    
+            if (
+                !user.PasswordResetCreated ||
+                Date.now() - user.PasswordResetCreated.getTime() > expiration
+            )
+            {
+                return res.status(200).json({
+                    error: 'Verification code has expired.'
+                });
+            }
+    
+            await users.updateOne(
+                { Email: email },
+                {
+                    $set:
+                    {
+                        Password: password
+                    },
+                    $unset:
+                    {
+                        PasswordResetCode: "",
+                        PasswordResetCreated: ""
+                    }
+                }
+            );
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+    
+        res.status(200).json({
+            error
+        });
+    });
+
+    app.post('/api/resendpasswordreset', async (req, res, next) =>
+    {
+        const { email } = req.body;
+        let error = '';
+    
+        try
+        {
+            const db = client.db('Skylanders');
+            const users = db.collection('Users');
+    
+            const user = await users.findOne({
+                Email: email
+            });
+    
+            if (!user)
+            {
+                return res.status(200).json({
+                    error: 'User not found.'
+                });
+            }
+    
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+    
+            await users.updateOne(
+                { Email: email },
+                {
+                    $set:
+                    {
+                        PasswordResetCode: code,
+                        PasswordResetCreated: new Date()
+                    }
+                }
+            );
+    
+            await sendEmail(
+                email,
+                'Skylanders Password Reset',
+                'Your new password reset code is: ' + code
+            );
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+    
+        res.status(200).json({
+            error
+        });
+    });
+
    //  viewcollection
     app.post('/api/getcollection', async (req, res, next) =>
     {
