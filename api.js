@@ -102,8 +102,29 @@ exports.setApp = function(app, client)
 
         if (user.IsVerified !== true)
         {
+            const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+        
+            await db.collection('Users').updateOne(
+                { _id: user._id },
+                {
+                    $set:
+                    {
+                        Code: newCode,
+                        CodeCreated: new Date()
+                    }
+                }
+            );
+        
+            await sendEmail(
+                user.Email,
+                'Verify your Skylanders account',
+                'Your verification code is: ' + newCode
+            );
+        
             return res.status(200).json({
-                error: 'Email not verified.'
+                error: 'Email not verified.',
+                needsVerification: true,
+                email: user.Email
             });
         }
 
