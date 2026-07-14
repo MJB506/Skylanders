@@ -4,27 +4,34 @@ import { buildPath } from './Path';
 
 async function resendCode()
 {
-    const response = await fetch(
-        buildPath('api/resendverification'),
-        {
-            method: 'POST',
-            headers:
-            {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        }
-    );
-
-    const res = await response.json();
-
-    if (res.error)
+    try
     {
-        setMessage(res.error);
-        return;
-    }
+        const response = await fetch(
+            buildPath('api/resendverification'),
+            {
+                method: 'POST',
+                headers:
+                {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            }
+        );
 
-    setMessage("A new verification code has been sent.");
+        const res = await response.json();
+
+        if (res.error)
+        {
+            setMessage(res.error);
+            return;
+        }
+
+        setMessage("A new verification code has been sent.");
+    }
+    catch (error: any)
+    {
+        setMessage(error.toString());
+    }
 }
 
 function EmailConfirmation()
@@ -45,6 +52,11 @@ function EmailConfirmation()
         if (code.length !== 6)
         {
             setMessage("Please enter your 6-digit verification code.");
+            return;
+        }
+        if (!/^\d{6}$/.test(code))
+        {
+            setMessage("Please enter a valid 6-digit code.");
             return;
         }
 
@@ -102,10 +114,13 @@ function EmailConfirmation()
             <br /><br />
 
             <input
+                <input
                 type="text"
+                maxLength={6}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 id="verificationCode"
                 placeholder="6-digit code"
-                maxLength={6}
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
             />
