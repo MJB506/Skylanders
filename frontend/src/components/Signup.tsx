@@ -79,7 +79,6 @@ function Signup()
             }
             else
             {
-                alert("Registration successful! Please verify your email before logging in.");
                 navigate('/verify-email', {
                     state:
                     {
