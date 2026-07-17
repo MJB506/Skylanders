@@ -1,8 +1,18 @@
+import logo from "../../images/Games/Skylanders_Logo.webp";
+
 function PageTitle()
 {
-  return(
-    <h1 id="title">COP 4331 MERN Stack Demo</h1>
-  );
-};
+    return (
+        <header className="page-header">
+
+            <img
+                src={logo}
+                alt="Skylanders Logo"
+                className="logo"
+            />
+
+        </header>
+    );
+}
 
 export default PageTitle;
