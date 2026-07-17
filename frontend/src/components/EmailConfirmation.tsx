@@ -116,11 +116,12 @@ function EmailConfirmation()
             >
     
                 <input
+                    className="code-input"
                     type="text"
                     maxLength={6}
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    placeholder="6-Digit Code"
+                    placeholder="123456"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                 />
