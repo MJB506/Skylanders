@@ -91,7 +91,7 @@ function Login()
         
                 <input
                     type="text"
-                    placeholder="Username/Email"
+                    placeholder="Username"
                     value={loginName}
                     onChange={handleSetLoginName}
                 />
