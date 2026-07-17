@@ -94,65 +94,66 @@ function Signup()
     }
 
     return (
-        <div id="signupDiv">
-
-            <span id="inner-title">CREATE ACCOUNT</span>
-            <br /><br />
-
-            <input
-                type="text"
-                id="signupUsername"
-                placeholder="Username"
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <br />
-
-            <input
-                type="email"
-                id="signupEmail"
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <br />
-
-            <input
-                type="password"
-                id="signupPassword"
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <br />
-
-            <input
-                type="password"
-                id="signupConfirmPassword"
-                placeholder="Confirm Password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <br />
-
-            <input
-                type="submit"
-                id="signupButton"
-                className="buttons"
-                value="Create Account"
-                onClick={doSignup}
-            />
-            
-            <br /><br />
-            
-            <input
-                type="button"
-                id="loginRedirectButton"
-                className="buttons"
-                value="Already have an account? Log in!"
-                onClick={() => navigate('/')}
-            />
-            
-            <br /><br />
-            
-            <span id="signupResult">{message}</span>
-
+        <div className="login-container">
+    
+            <h1>Create Account</h1>
+    
+            <form
+                onSubmit={(e) =>
+                {
+                    e.preventDefault();
+                    doSignup(e);
+                }}
+            >
+    
+                <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+    
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+    
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+    
+                <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+    
+                <button
+                    className="login-button"
+                    type="submit"
+                >
+                    Create Account
+                </button>
+    
+            </form>
+    
+            <p className="login-links">
+                Already have an account?{" "}
+                <span onClick={() => navigate("/")}>
+                    Log In
+                </span>
+            </p>
+    
+            <div className="error-message">
+                {message}
+            </div>
+    
         </div>
     );
 }
