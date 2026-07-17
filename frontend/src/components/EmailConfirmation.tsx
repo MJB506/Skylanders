@@ -121,7 +121,7 @@ function EmailConfirmation()
                     maxLength={6}
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    placeholder="123456"
+                    placeholder="code"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                 />
