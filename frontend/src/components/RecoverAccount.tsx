@@ -23,7 +23,7 @@ function RecoverAccount()
         try
         {
             const response = await fetch(
-                buildPath('api/recoveraccount),
+                buildPath('api/recoveraccount'),
                 {
                     method: 'POST',
                     headers:
