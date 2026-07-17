@@ -35,15 +35,11 @@ body{
     margin-top:25px;
 }
 
-.login-container h1{
-
-    color:#90e6ff;
-
-    font-size:64px;
-
-    font-weight:300;
-
-    margin-bottom:35px;
+.login-container h1 {
+    color: #90e6ff;
+    font-size: 64px;
+    font-weight: bold;
+    margin-bottom: 35px;
 }
 
 .login-container form{
