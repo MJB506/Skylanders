@@ -103,14 +103,6 @@ function Login()
                     onChange={handleSetPassword}
                 />
         
-                <label className="remember-me">
-        
-                    <input type="checkbox" />
-        
-                    Remember Me
-        
-                </label>
-        
                 <button
                     className="login-button"
                     type="submit"
