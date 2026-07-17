@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
 
@@ -243,12 +243,13 @@ function SearchUI()
         }
     }
 
+    //COMMENTED OUT TO PREVENT ERROR, FIX IF NEEDED
     // open delete confirmation popup
-    function openDeletePopup(type: 'collection' | 'wishlist' | 'friend', id: string, label: string): void
-    {
-        setDeleteTarget({ type, id, label });
-        setShowDeletePopup(true);
-    }
+    // function openDeletePopup(type: 'collection' | 'wishlist' | 'friend', id: string, label: string): void
+    // {
+    //     setDeleteTarget({ type, id, label });
+    //     setShowDeletePopup(true);
+    // }
 
     // confirm delete
     async function confirmDelete(): Promise<void>
