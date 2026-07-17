@@ -114,7 +114,7 @@ function Login()
         
             <p className="login-links">
         
-                New User? 
+                New User?
         
                 <span onClick={() => navigate("/signup")}>
                     Sign Up
@@ -124,7 +124,7 @@ function Login()
         
             <p className="login-links">
         
-                Forgot Your Password? 
+                Forgot Your Password?
         
                 <span onClick={() => navigate("/recover-account")}>
                     Reset
