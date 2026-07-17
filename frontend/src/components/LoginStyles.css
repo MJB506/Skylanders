@@ -50,6 +50,7 @@ body{
 }
 
 .login-container input[type="text"],
+.login-container input[type="email"],
 .login-container input[type="password"] {
     height: 42px;
     font-size: 22px;
