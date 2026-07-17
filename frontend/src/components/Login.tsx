@@ -3,7 +3,7 @@ import { buildPath } from './Path';
 import { storeToken } from '../tokenStorage';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import "components/LoginStyles.css";
+import "LoginStyles.css";
 
 function Login()
 {
