@@ -132,8 +132,11 @@ function PasswordReset()
             >
     
                 <input
+                    className="code-input"
                     type="text"
                     maxLength={6}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     placeholder="Recovery Code"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
