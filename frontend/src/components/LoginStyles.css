@@ -57,20 +57,21 @@ body{
     gap:20px;
 }
 
-.login-container input[type=text],
-.login-container input[type=password]{
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    height: 42px;
+    font-size: 22px;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background: #efefef;
+    color: #111;
+}
 
-    height:42px;
-
-    font-size:22px;
-
-    padding:10px;
-
-    border:none;
-
-    outline:none;
-
-    background:#efefef;
+.login-container input[type="text"]::placeholder,
+.login-container input[type="password"]::placeholder {
+    color: #666;
+    opacity: 1;
 }
 
 .remember-me{
