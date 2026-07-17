@@ -175,4 +175,19 @@ body{
     color: #08111f;
 }
 
+.auth-description {
+
+    width: 460px;
+
+    color: white;
+
+    font-size: 18px;
+
+    text-align: center;
+
+    line-height: 1.5;
+
+    margin-bottom: 30px;
+}
+
 
