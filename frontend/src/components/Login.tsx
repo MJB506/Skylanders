@@ -85,7 +85,7 @@ function Login()
     return (
         <div className="login-container">
         
-            <h1>Collection Tracker</h1>
+            <h1 style="font-weight: bold;">Collection Tracker</h1>
         
             <form onSubmit={doLogin}>
         
