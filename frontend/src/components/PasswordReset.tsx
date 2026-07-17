@@ -112,66 +112,66 @@ function PasswordReset()
     }
 
     return (
-        <div id="passwordResetDiv">
-
-            <span id="inner-title">
-                RESET PASSWORD
-            </span>
-
-            <br /><br />
-
-            <strong>{email}</strong>
-
-            <br /><br />
-
-            <input
-                type="text"
-                maxLength={6}
-                placeholder="Recovery Code"
-                value={code}
-                onChange={(e)=>setCode(e.target.value)}
-            />
-
-            <br />
-
-            <input
-                type="password"
-                placeholder="New Password"
-                value={password}
-                onChange={(e)=>setPassword(e.target.value)}
-            />
-
-            <br />
-
-            <input
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e)=>setConfirmPassword(e.target.value)}
-            />
-
-            <br /><br />
-
-            <input
-                type="submit"
-                className="buttons"
-                value="Reset Password"
-                onClick={resetPassword}
-            />
-
-            <br /><br />
-
-            <input
-                type="button"
-                className="buttons"
-                value="Send New Code"
+        <div className="login-container">
+    
+            <h1>Reset Password</h1>
+    
+            <p className="email-display">
+                Recovery code sent to
+                <br />
+                <strong>{email}</strong>
+            </p>
+    
+            <form
+                onSubmit={(e) =>
+                {
+                    e.preventDefault();
+                    resetPassword(e);
+                }}
+            >
+    
+                <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="Recovery Code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                />
+    
+                <input
+                    type="password"
+                    placeholder="New Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+    
+                <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+    
+                <button
+                    className="login-button"
+                    type="submit"
+                >
+                    Reset Password
+                </button>
+    
+            </form>
+    
+            <button
+                className="secondary-button"
                 onClick={resendCode}
-            />
-
-            <br /><br />
-
-            <span>{message}</span>
-
+            >
+                Send New Code
+            </button>
+    
+            <div className="error-message">
+                {message}
+            </div>
+    
         </div>
     );
 }
