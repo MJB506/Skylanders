@@ -132,4 +132,47 @@ body{
     font-size:18px;
 }
 
+.email-display {
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.email-display strong {
+    color: #90e6ff;
+    font-size: 22px;
+}
+
+.secondary-button {
+
+    margin-top: 20px;
+
+    width: 460px;
+
+    height: 55px;
+
+    background: transparent;
+
+    color: #90e6ff;
+
+    border: 2px solid #90e6ff;
+
+    border-radius: 6px;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.secondary-button:hover {
+
+    background: #90e6ff;
+
+    color: #08111f;
+}
+
 
