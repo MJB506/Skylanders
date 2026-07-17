@@ -1,1 +1,141 @@
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#09071d;
+}
 
+.page-header{
+
+    background:#8ed6ef;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:20px;
+}
+
+.logo{
+
+    width:350px;
+
+    max-width:90%;
+}
+
+.login-container{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    margin-top:25px;
+}
+
+.login-container h1{
+
+    color:#90e6ff;
+
+    font-size:64px;
+
+    font-weight:300;
+
+    margin-bottom:35px;
+}
+
+.login-container form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    width:460px;
+
+    gap:20px;
+}
+
+.login-container input[type=text],
+.login-container input[type=password]{
+
+    height:42px;
+
+    font-size:22px;
+
+    padding:10px;
+
+    border:none;
+
+    outline:none;
+
+    background:#efefef;
+}
+
+.remember-me{
+
+    color:white;
+
+    font-size:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+.login-button{
+
+    margin-top:10px;
+
+    background:#91dbf3;
+
+    color:black;
+
+    border:none;
+
+    height:60px;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.login-button:hover{
+
+    background:#7bcde8;
+}
+
+.login-links{
+
+    color:white;
+
+    font-size:18px;
+
+    margin:8px;
+}
+
+.login-links span{
+
+    color:#7fdcff;
+
+    cursor:pointer;
+}
+
+.login-links span:hover{
+
+    text-decoration:underline;
+}
+
+.error-message{
+
+    color:#ff7070;
+
+    margin-top:20px;
+
+    font-size:18px;
+}
