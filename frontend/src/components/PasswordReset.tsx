@@ -56,8 +56,8 @@ function PasswordReset()
                     },
                     body: JSON.stringify({
                         email,
-                        code,
-                        password
+                        recoveryCode: code,
+                        newPassword: password
                     })
                 }
             );
@@ -85,7 +85,7 @@ function PasswordReset()
         try
         {
             const response = await fetch(
-                buildPath('api/resendpasswordreset'),
+                buildPath('api/recoveraccount'),
                 {
                     method: 'POST',
                     headers:
