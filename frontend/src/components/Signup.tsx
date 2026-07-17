@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { buildPath } from './Path';
 import { useNavigate } from 'react-router-dom';
+import "./LoginStyles.css";
 
 function Signup()
 {
