@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { buildPath } from './Path';
+import "./LoginStyles.css";
 
 function RecoverAccount()
 {
