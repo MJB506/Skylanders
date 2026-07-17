@@ -120,11 +120,10 @@ body{
     margin:8px;
 }
 
-.login-links span{
-
-    color:#7fdcff;
-
-    cursor:pointer;
+.login-links span {
+    margin-left: 6px;
+    color: #7fdcff;
+    cursor: pointer;
 }
 
 .login-links span:hover{
