@@ -65,12 +65,11 @@ exports.setApp = function(app, client)
             await sendEmail(
                 email,
                 'Verify your Skylanders account',
-                'Your verification code is: ' + newUser.Code
+                'Your verification code is: ' + newUser.Code + '\n\nThis code expires in 15 minutes. Do not share it with anyone.'
             );
         }
         catch(e)
         {
-            console.log('Email failed: ' + e.toString());
         }
 
         res.status(200).json({
@@ -81,232 +80,52 @@ exports.setApp = function(app, client)
 
     //  updated: check isVerified first
     app.post('/api/login', async (req, res, next) =>
+{
+    const { login, password } = req.body;
+
+    try
     {
-        const { login, password } = req.body;
-    
-        try
+        const db = client.db('Skylanders');
+
+        const user = await db.collection('Users').findOne({
+            Username: login,
+            Password: password
+        });
+
+        if (!user)
         {
-            const db = client.db('Skylanders');
-    
-            const user = await db.collection('Users').findOne({
-                Username: login,
-                Password: password
-            });
-    
-            if (!user)
-            {
-                return res.status(200).json({
-                    error: 'Login/Password incorrect'
-                });
-            }
-    
-            if (user.IsVerified !== true)
-            {
-                const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-            
-                await db.collection('Users').updateOne(
-                    { _id: user._id },
-                    {
-                        $set:
-                        {
-                            Code: newCode,
-                            CodeCreated: new Date()
-                        }
-                    }
-                );
-            
-                await sendEmail(
-                    user.Email,
-                    'Verify your Skylanders account',
-                    'Your verification code is: ' + newCode
-                );
-            
-                return res.status(200).json({
-                    error: 'Email not verified.',
-                    needsVerification: true,
-                    email: user.Email
-                });
-            }
-    
-            const userId = user._id.toString();
-    
-            const ret = token.createToken(
-                user.FirstName,
-                user.LastName,
-                userId
-            );
-    
             return res.status(200).json({
-                userId,
-                ...ret
+                error: 'Login/Password incorrect'
             });
         }
-        catch(e)
-        {
-            return res.status(500).json({
-                error: e.toString()
-            });
-        }
-    });
 
-    app.post('/api/requestpasswordreset', async (req, res, next) =>
-    {
-        const { email } = req.body;
-        let error = '';
-    
-        try
+        if (user.IsVerified !== true)
         {
-            const db = client.db('Skylanders');
-            const users = db.collection('Users');
-    
-            const user = await users.findOne({
-                Email: email
+            return res.status(200).json({
+                error: 'Email not verified.'
             });
-    
-            if (!user)
-            {
-                return res.status(200).json({
-                    error: 'No account exists with that email.'
-                });
-            }
-    
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-    
-            await users.updateOne(
-                { Email: email },
-                {
-                    $set:
-                    {
-                        PasswordResetCode: code,
-                        PasswordResetCreated: new Date()
-                    }
-                }
-            );
-    
-            await sendEmail(
-                email,
-                'Skylanders Password Reset',
-                'Your password reset code is: ' + code
-            );
         }
-        catch(e)
-        {
-            error = e.toString();
-        }
-    
-        res.status(200).json({
-            error
-        });
-    });
 
-    app.post('/api/resetpassword', async (req, res, next) =>
-    {
-        const { email, code, password } = req.body;
-        let error = '';
-    
-        try
-        {
-            const db = client.db('Skylanders');
-            const users = db.collection('Users');
-    
-            const user = await users.findOne({
-                Email: email,
-                PasswordResetCode: code
-            });
-    
-            if (!user)
-            {
-                return res.status(200).json({
-                    error: 'Invalid verification code.'
-                });
-            }
-    
-            const expiration = 15 * 60 * 1000;
-    
-            if (
-                !user.PasswordResetCreated ||
-                Date.now() - user.PasswordResetCreated.getTime() > expiration
-            )
-            {
-                return res.status(200).json({
-                    error: 'Verification code has expired.'
-                });
-            }
-    
-            await users.updateOne(
-                { Email: email },
-                {
-                    $set:
-                    {
-                        Password: password
-                    },
-                    $unset:
-                    {
-                        PasswordResetCode: "",
-                        PasswordResetCreated: ""
-                    }
-                }
-            );
-        }
-        catch(e)
-        {
-            error = e.toString();
-        }
-    
-        res.status(200).json({
-            error
-        });
-    });
+        const userId = user._id.toString();
 
-    app.post('/api/resendpasswordreset', async (req, res, next) =>
-    {
-        const { email } = req.body;
-        let error = '';
-    
-        try
-        {
-            const db = client.db('Skylanders');
-            const users = db.collection('Users');
-    
-            const user = await users.findOne({
-                Email: email
-            });
-    
-            if (!user)
-            {
-                return res.status(200).json({
-                    error: 'User not found.'
-                });
-            }
-    
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-    
-            await users.updateOne(
-                { Email: email },
-                {
-                    $set:
-                    {
-                        PasswordResetCode: code,
-                        PasswordResetCreated: new Date()
-                    }
-                }
-            );
-    
-            await sendEmail(
-                email,
-                'Skylanders Password Reset',
-                'Your new password reset code is: ' + code
-            );
-        }
-        catch(e)
-        {
-            error = e.toString();
-        }
-    
-        res.status(200).json({
-            error
+        const ret = token.createToken(
+            user.FirstName,
+            user.LastName,
+            userId
+        );
+
+        return res.status(200).json({
+            userId,
+            ...ret
         });
-    });
+    }
+    catch(e)
+    {
+        return res.status(500).json({
+            error: e.toString()
+        });
+    }
+});
 
    //  viewcollection
     app.post('/api/getcollection', async (req, res, next) =>
@@ -349,7 +168,7 @@ exports.setApp = function(app, client)
             error = e.toString();
         }
 
-        //  refresh the token now (though it's infinite now isn't it?)
+        //  refresh the token
         const refreshedToken = token.refresh(jwtToken);
 
         res.status(200).json({
@@ -403,7 +222,7 @@ exports.setApp = function(app, client)
             await sendEmail(
                 email,
                 'Verify your Skylanders account',
-                'Your verification code is: ' + newCode
+                'Your verification code is: ' + newCode + '\n\nThis code expires in 15 minutes. Do not share it with anyone.'
             );
         }
         catch(e)
@@ -505,7 +324,7 @@ exports.setApp = function(app, client)
             error = e.toString();
         }
 
-        //  refresh the token now (though it's infinite now isn't it?)
+        //  refresh the token
         const refreshedToken = token.refresh(jwtToken);
 
         res.status(200).json({
@@ -740,6 +559,54 @@ exports.setApp = function(app, client)
         });
     });
 
+
+    //  new
+    app.post('/api/updatequantity', async (req, res, next) =>
+    {
+        // incoming: userId, figureId, boxed, quantity, jwtToken
+        // outgoing: error
+        var error = '';
+        const { userId, figureId, boxed, quantity, jwtToken } = req.body;
+
+        if (token.isExpired(jwtToken))
+        {
+            return res.status(200).json({
+                error: 'The JWT is no longer valid',
+                jwtToken: ''
+            });
+        }
+
+        try
+        {
+            const db = client.db('Skylanders');
+
+            await db.collection('Collection').updateOne(
+                {
+                    _id: {
+                        UserId: new ObjectId(userId),
+                        FigureId: new ObjectId(figureId),
+                        Boxed: boxed
+                    }
+                },
+                {
+                    $set: {
+                        Quantity: quantity
+                    }
+                }
+            );
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+
+        const refreshedToken = token.refresh(jwtToken);
+
+        res.status(200).json({
+            error,
+            jwtToken: refreshedToken
+        });
+    });
 
     //  new
     app.post('/api/searchusers', async (req, res, next) =>
@@ -1056,7 +923,7 @@ exports.setApp = function(app, client)
            await sendEmail(
             email,
             'Recover your Skylanders account',
-            'Your recovery code is: ' + recoveryCode
+            'Your recovery code is: ' + recoveryCode + '\n\nThis code expires in 15 minutes. Do not share it with anyone.'
         );
         }
         catch(e)
