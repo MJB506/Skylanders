@@ -73,7 +73,7 @@ function Login()
                     JSON.stringify(user)
                 );
 
-                navigate('/cards');
+                navigate('/collection');
             }
         }
         catch(error:any)
