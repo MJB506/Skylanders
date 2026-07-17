@@ -37,20 +37,16 @@ body{
 
 .login-container h1 {
     color: #90e6ff;
-    font-size: 64px;
-    font-weight: bold;
-    margin-bottom: 35px;
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 30px;
 }
 
-.login-container form{
-
-    display:flex;
-
-    flex-direction:column;
-
-    width:460px;
-
-    gap:20px;
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    width: 460px;
+    gap: 18px;
 }
 
 .login-container input[type="text"],
@@ -135,3 +131,5 @@ body{
 
     font-size:18px;
 }
+
+
