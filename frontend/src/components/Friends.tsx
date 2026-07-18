@@ -1,21 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import {
-    searchUsers,
-    sendFriendRequest,
-    removeFriend,
-    acceptFriendRequest,
-    denyFriendRequest,
-    getFriendsList,
-} from '../api/friendsApi';
-import type { UserSearchResult, UserInfo, PendingFriendInfo } from '../api/types';
+import { useEffect, useState } from 'react';
+import { buildPath } from './Path';
+import { retrieveToken, storeToken } from '../tokenStorage';
 
-function FriendsUI()
+function Friends()
 {
     const [message, setMessage] = useState('');
-    const [search, setSearchValue] = React.useState('');
-    const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
-    const [friends, setFriends] = useState<UserInfo[]>([]);
-    const [pending, setPending] = useState<PendingFriendInfo[]>([]);
+    const [search, setSearchValue] = useState('');
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [friends, setFriends] = useState<any[]>([]);
+    const [pending, setPending] = useState<any[]>([]);
+
+    function getUserId() : string
+    {
+        const raw = localStorage.getItem('user_data');
+        if (!raw) return '';
+        try
+        {
+            return JSON.parse(raw).id ?? '';
+        }
+        catch
+        {
+            return '';
+        }
+    }
 
     useEffect(() =>
     {
@@ -26,7 +33,20 @@ function FriendsUI()
     {
         try
         {
-            const res = await getFriendsList();
+            const obj = { userId: getUserId(), jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/getfriendslist'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -48,7 +68,20 @@ function FriendsUI()
         e.preventDefault();
         try
         {
-            const res = await searchUsers(search);
+            const obj = { userId: getUserId(), search, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/searchusers'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -68,7 +101,20 @@ function FriendsUI()
     {
         try
         {
-            const res = await sendFriendRequest(friendId);
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/sendfriendrequest'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -89,7 +135,20 @@ function FriendsUI()
     {
         try
         {
-            const res = await acceptFriendRequest(friendId);
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/acceptfriendrequest'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -110,7 +169,20 @@ function FriendsUI()
     {
         try
         {
-            const res = await denyFriendRequest(friendId);
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/denyfriendrequest'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -131,7 +203,20 @@ function FriendsUI()
     {
         try
         {
-            const res = await removeFriend(friendId);
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/removefriend'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -153,8 +238,7 @@ function FriendsUI()
         <br />
         Find Users: <input type="text" id="userSearchText" placeholder="Username"
         value={search} onChange={(e) => setSearchValue(e.target.value)} />
-        <button type="button" id="searchUsersButton" className="buttons"
-        onClick={doSearch}> Search </button>
+        <input type="submit" id="searchUsersButton" className="buttons" value="Search" onClick={doSearch} />
         <br /><br />
 
         {searchResults.length > 0 &&
@@ -162,8 +246,8 @@ function FriendsUI()
             {searchResults.map((u) => (
                 <div key={u.id} className="friendRow">
                 <span>{u.username} ({u.firstName} {u.lastName})</span>{' '}
-                <button type="button" className="buttons"
-                onClick={() => handleSendRequest(u.id)}> Add Friend </button>
+                <input type="button" className="buttons" value="Add Friend"
+                onClick={() => handleSendRequest(u.id)} />
                 </div>
             ))}
         </div>
@@ -182,15 +266,15 @@ function FriendsUI()
                 {p.direction === 'received' ?
                 (
                     <>
-                    <button type="button" className="buttons"
-                    onClick={() => handleAccept(p.id)}> Accept </button>
-                    <button type="button" className="buttons"
-                    onClick={() => handleDeny(p.id)}> Deny </button>
+                    <input type="button" className="buttons" value="Accept"
+                    onClick={() => handleAccept(p.id)} />
+                    <input type="button" className="buttons" value="Deny"
+                    onClick={() => handleDeny(p.id)} />
                     </>
                 ) :
                 (
-                    <button type="button" className="buttons"
-                    onClick={() => handleRemove(p.id)}> Cancel </button>
+                    <input type="button" className="buttons" value="Cancel"
+                    onClick={() => handleRemove(p.id)} />
                 )}
                 </div>
             ))}
@@ -203,8 +287,8 @@ function FriendsUI()
             {friends.map((f) => (
                 <div key={f.id} className="friendRow">
                 <span>{f.username} ({f.firstName} {f.lastName})</span>{' '}
-                <button type="button" className="buttons"
-                onClick={() => handleRemove(f.id)}> Remove Friend </button>
+                <input type="button" className="buttons" value="Remove Friend"
+                onClick={() => handleRemove(f.id)} />
                 </div>
             ))}
         </div>
@@ -214,4 +298,4 @@ function FriendsUI()
     );
 };
 
-export default FriendsUI;
+export default Friends;

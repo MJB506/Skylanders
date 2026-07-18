@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { searchFigures } from '../api/figuresApi';
-import {
-    addToCollection,
-    getCollection,
-    removeFromCollection,
-} from '../api/collectionApi';
-import type { Figure, CollectionFigure } from '../api/types';
+import { useEffect, useState } from 'react';
+import { buildPath } from './Path';
+import { retrieveToken, storeToken } from '../tokenStorage';
 
-function CollectionUI()
+function Collection()
 {
     const [message, setMessage] = useState('');
-    const [search, setSearchValue] = React.useState('');
-    const [searchResults, setSearchResults] = useState<Figure[]>([]);
-    const [collection, setCollection] = useState<CollectionFigure[]>([]);
+    const [search, setSearchValue] = useState('');
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [collection, setCollection] = useState<any[]>([]);
+
+    function getUserId() : string
+    {
+        const raw = localStorage.getItem('user_data');
+        if (!raw) return '';
+        try
+        {
+            return JSON.parse(raw).id ?? '';
+        }
+        catch
+        {
+            return '';
+        }
+    }
 
     useEffect(() =>
     {
@@ -23,7 +32,20 @@ function CollectionUI()
     {
         try
         {
-            const res = await getCollection();
+            const obj = { userId: getUserId(), jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/getcollection'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -44,7 +66,20 @@ function CollectionUI()
         e.preventDefault();
         try
         {
-            const res = await searchFigures(search);
+            const obj = { search, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/searchfigures'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -64,7 +99,20 @@ function CollectionUI()
     {
         try
         {
-            const res = await addToCollection(figureId, boxed, 1);
+            const obj = { userId: getUserId(), figureId, boxed, quantity: 1, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/addtocollection'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -85,7 +133,20 @@ function CollectionUI()
     {
         try
         {
-            const res = await removeFromCollection(figureId, boxed);
+            const obj = { userId: getUserId(), figureId, boxed, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/removefromcollection'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+
+            if (res.jwtToken)
+            {
+                storeToken({ accessToken: res.jwtToken });
+            }
+
             if (res.error)
             {
                 setMessage(res.error);
@@ -107,8 +168,7 @@ function CollectionUI()
         <br />
         Search Catalog: <input type="text" id="figureSearchText" placeholder="Figure name"
         value={search} onChange={(e) => setSearchValue(e.target.value)} />
-        <button type="button" id="searchFigureButton" className="buttons"
-        onClick={doSearch}> Search </button>
+        <input type="submit" id="searchFigureButton" className="buttons" value="Search" onClick={doSearch} />
         <br /><br />
 
         {searchResults.length > 0 &&
@@ -116,10 +176,10 @@ function CollectionUI()
             {searchResults.map((fig) => (
                 <div key={fig._id} className="figureRow">
                 <span>{fig.Name} ({fig.Element})</span>{' '}
-                <button type="button" className="buttons"
-                onClick={() => handleAdd(fig._id, false)}> Add (Unboxed) </button>
-                <button type="button" className="buttons"
-                onClick={() => handleAdd(fig._id, true)}> Add (Boxed) </button>
+                <input type="button" className="buttons" value="Add (Unboxed)"
+                onClick={() => handleAdd(fig._id, false)} />
+                <input type="button" className="buttons" value="Add (Boxed)"
+                onClick={() => handleAdd(fig._id, true)} />
                 </div>
             ))}
         </div>
@@ -132,10 +192,10 @@ function CollectionUI()
             {collection.map((fig) => (
                 <div key={`${fig._id}-${fig.Boxed}`} className="figureRow">
                 <span>{fig.Name} — {fig.Boxed ? 'Boxed' : 'Unboxed'} — Qty: {fig.Quantity}</span>{' '}
-                <button type="button" className="buttons"
-                onClick={() => handleAdd(fig._id, fig.Boxed)}> +1 </button>
-                <button type="button" className="buttons"
-                onClick={() => handleRemove(fig._id, fig.Boxed)}> Remove Entry </button>
+                <input type="button" className="buttons" value="+1"
+                onClick={() => handleAdd(fig._id, fig.Boxed)} />
+                <input type="button" className="buttons" value="Remove Entry"
+                onClick={() => handleRemove(fig._id, fig.Boxed)} />
                 </div>
             ))}
         </div>
@@ -145,4 +205,4 @@ function CollectionUI()
     );
 };
 
-export default CollectionUI;
+export default Collection;

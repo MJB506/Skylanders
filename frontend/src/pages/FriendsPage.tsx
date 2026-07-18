@@ -1,6 +1,6 @@
 import PageTitle from '../components/PageTitle';
 import LoggedInName from '../components/LoggedInName';
-import FriendsUI from '../components/FriendsUI';
+import Friends from '../components/Friends';
 
 const FriendsPage = () =>
 {
@@ -8,7 +8,7 @@ const FriendsPage = () =>
         <div>
         <PageTitle />
         <LoggedInName />
-        <FriendsUI />
+        <Friends />
         </div>
     );
 }

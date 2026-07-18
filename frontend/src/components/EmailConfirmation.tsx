@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { buildPath } from './Path';
+import "./LoginStyles.css";
 
 function EmailConfirmation()
 {
@@ -96,51 +97,55 @@ function EmailConfirmation()
     }
 
     return (
-        <div id="emailConfirmationDiv">
-
-            <span id="inner-title">VERIFY YOUR EMAIL</span>
-
-            <br /><br />
-
-            <p>
-                A verification code has been sent to:
+        <div className="login-container">
+    
+            <h1>Verify Your Email</h1>
+    
+            <p className="email-display">
+                A verification code has been sent to
+                <br />
+                <strong>{email}</strong>
             </p>
-
-            <strong>{email}</strong>
-
-            <br /><br />
-
-            <input
-                type="text"
-                maxLength={6}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                id="verificationCode"
-                placeholder="6-digit code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-            />
-
-            <br /><br />
-
-            <input
-                type="submit"
-                className="buttons"
-                value="Verify Email"
-                onClick={verifyEmail}
-            />
-
-            <input
-                type="button"
-                className="buttons"
-                value="Send New Code"
+    
+            <form
+                onSubmit={(e) =>
+                {
+                    e.preventDefault();
+                    verifyEmail(e);
+                }}
+            >
+    
+                <input
+                    className="code-input"
+                    type="text"
+                    maxLength={6}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="Verification Code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                />
+    
+                <button
+                    className="login-button"
+                    type="submit"
+                >
+                    Verify Email
+                </button>
+    
+            </form>
+    
+            <button
+                className="secondary-button"
                 onClick={resendCode}
-            />
-
-            <br /><br />
-
-            <span>{message}</span>
-
+            >
+                Send New Code
+            </button>
+    
+            <div className="error-message">
+                {message}
+            </div>
+    
         </div>
     );
 }

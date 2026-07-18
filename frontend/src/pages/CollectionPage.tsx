@@ -1,6 +1,6 @@
 import PageTitle from '../components/PageTitle';
 import LoggedInName from '../components/LoggedInName';
-import CollectionUI from '../components/CollectionUI';
+import Collection from '../components/Collection';
 
 const CollectionPage = () =>
 {
@@ -8,7 +8,7 @@ const CollectionPage = () =>
         <div>
         <PageTitle />
         <LoggedInName />
-        <CollectionUI />
+        <Collection />
         </div>
     );
 }

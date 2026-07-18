@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
-import logo from '../../images/Games/Skylanders_Logo.webp';
+import PageTitle from './PageTitle';
 
 interface Figure
 {
@@ -337,10 +337,8 @@ function SearchUI()
     return (
         <div style={{ backgroundColor: '#0d1b2a', minHeight: '100vh', color: '#fff' }}>
 
-            {/* header */}
-            <header style={{ backgroundColor: '#7dd8f8', padding: '12px 0', textAlign: 'center' }}>
-                <img src={logo} alt="Skylanders Logo" style={{ height: '80px' }} />
-            </header>
+            {/* header - using shared PageTitle component */}
+            <PageTitle />
 
             {/* nav */}
             <nav style={{ backgroundColor: '#0d1b2a', padding: '10px 20px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
@@ -378,7 +376,7 @@ function SearchUI()
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
                     <input
                         type="text"
-                        placeholder={searchMode === 'figures' ? 'Search...' : 'Search...'}
+                        placeholder="Search..."
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}

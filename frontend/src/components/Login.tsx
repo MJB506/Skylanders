@@ -3,6 +3,7 @@ import { buildPath } from './Path';
 import { storeToken } from '../tokenStorage';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import "./LoginStyles.css";
 
 function Login()
 {
@@ -72,7 +73,7 @@ function Login()
                     JSON.stringify(user)
                 );
 
-                navigate('/cards');
+                navigate('/collection');
             }
         }
         catch(error:any)
@@ -81,43 +82,62 @@ function Login()
             return;
         }
     };
-    return(
-        <div id="loginDiv">
-        <span id="inner-title">PLEASE LOG IN</span><br />
-        <input type="text" id="loginName" placeholder="Username"onChange={handleSetLoginName} /><br></br>
-        <input type="password" id="loginPassword" placeholder="Password"onChange={handleSetPassword} /><br></br>
-        <input
-            type="submit"
-            id="loginButton"
-            className="buttons"
-            value="Do It"
-            onClick={doLogin}
-        />
+    return (
+        <div className="login-container">
         
-        <br /><br />
-
-        <input
-            type="button"
-            className="buttons"
-            value="Forgot your password?"
-            onClick={() => navigate('/recover-account')}
-        />
-            
-        <br /><br />
-        <input
-            type="button"
-            id="signupRedirectButton"
-            className="buttons"
-            value="Don't have an account? Sign up!"
-            onClick={() => navigate('/signup')}
-        />
-
-        <br /><br />
-    
-        <span id="loginResult">{message}</span>
+            <h1>Collection Tracker</h1>
+        
+            <form onSubmit={doLogin}>
+        
+                <input
+                    type="text"
+                    placeholder="Username"
+                    value={loginName}
+                    onChange={handleSetLoginName}
+                />
+        
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={loginPassword}
+                    onChange={handleSetPassword}
+                />
+        
+                <button
+                    className="login-button"
+                    type="submit"
+                >
+                    Login
+                </button>
+        
+            </form>
+        
+            <p className="login-links">
+        
+                New User?
+        
+                <span onClick={() => navigate("/signup")}>
+                    Sign Up
+                </span>
+        
+            </p>
+        
+            <p className="login-links">
+        
+                Forgot Your Password?
+        
+                <span onClick={() => navigate("/recover-account")}>
+                    Reset
+                </span>
+        
+            </p>
+        
+            <div className="error-message">
+                {message}
+            </div>
+        
         </div>
-    );
-
+        );
     function handleSetLoginName( e: any ) : void
     {
     setLoginName( e.target.value );
@@ -128,6 +148,5 @@ function Login()
     }
     
 };
-
 
 export default Login;
