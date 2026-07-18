@@ -1,0 +1,265 @@
+/* ProfileStyles.css
+   Matches LoginStyles.css's palette and naming conventions.
+   Import directly in each component that needs it, e.g.:
+   import "./ProfileStyles.css";
+*/
+
+.page-header {
+    background: #8ed6ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.logo {
+    width: 350px;
+    max-width: 90%;
+}
+
+.top-nav {
+    background: #09071d;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px;
+    font-size: 18px;
+}
+
+.top-nav a {
+    color: white;
+    text-decoration: none;
+}
+
+.top-nav a.active {
+    color: #90e6ff;
+    font-weight: 700;
+}
+
+.profile-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px 48px;
+    color: white;
+}
+
+.profile-title {
+    color: white;
+    font-size: 40px;
+    font-weight: 700;
+    margin: 24px 0 16px;
+}
+
+.profile-title span {
+    color: #90e6ff;
+}
+
+.tabs-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.tabs {
+    font-size: 18px;
+}
+
+.tabs a {
+    color: #7fdcff;
+    text-decoration: none;
+    margin-right: 6px;
+}
+
+.tabs a.active {
+    text-decoration: underline;
+    font-weight: 700;
+}
+
+.tabs .sep {
+    color: #666;
+    margin-right: 6px;
+}
+
+.action-button {
+    background: #91dbf3;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    height: 44px;
+    padding: 0 18px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.action-button:hover {
+    background: #7bcde8;
+}
+
+.action-button-small {
+    height: 34px;
+    padding: 0 12px;
+    font-size: 15px;
+}
+
+.remove-button {
+    background: transparent;
+    color: #ff7070;
+    border: 2px solid #ff7070;
+    border-radius: 6px;
+    height: 44px;
+    padding: 0 18px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.remove-button:hover {
+    background: #ff7070;
+    color: #08111f;
+}
+
+.remove-button-small {
+    height: 34px;
+    padding: 0 12px;
+    font-size: 15px;
+}
+
+.add-panel {
+    background: #14122e;
+    border: 1px solid #2a2860;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.add-panel input[type="text"] {
+    height: 38px;
+    font-size: 18px;
+    padding: 8px;
+    border: none;
+    outline: none;
+    background: #efefef;
+    color: #111;
+    margin-right: 8px;
+}
+
+.add-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2860;
+}
+.add-result-row:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    color: #90e6ff;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 24px 0 12px;
+}
+
+.list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid #2a2860;
+}
+
+.list-row-name {
+    font-size: 24px;
+    margin: 0 0 4px;
+}
+
+.list-row-meta {
+    color: #999;
+    font-size: 14px;
+}
+
+.list-row-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.figure-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid #2a2860;
+}
+
+.figure-image {
+    width: 120px;
+    height: 120px;
+    background: #d9d9d9;
+    border-radius: 6px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.figure-info {
+    flex: 1;
+}
+
+.figure-name {
+    font-size: 28px;
+    margin: 0 0 6px;
+}
+
+.figure-detail {
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.figure-side {
+    text-align: right;
+    min-width: 140px;
+}
+
+.figure-side .action-button {
+    margin-bottom: 10px;
+}
+
+.figure-meta {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 32px;
+}
+
+.pagination button {
+    background: none;
+    border: none;
+    color: #7fdcff;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.pagination button.active {
+    text-decoration: underline;
+    font-weight: 700;
+}
+
+.pagination button:disabled {
+    color: #666;
+    cursor: default;
+}
+
+.empty-message {
+    color: #999;
+    padding: 24px 0;
+}
