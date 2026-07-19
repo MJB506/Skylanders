@@ -1,33 +1,31 @@
 import { useEffect, useState } from 'react';
 import { buildPath } from './Path';
 import { retrieveToken, storeToken } from '../tokenStorage';
+import ProfileHeader from './ProfileHeader';
+import ProfileTabs from './ProfileTabs';
+import Pagination from './Pagination';
+import "./ProfileStyles.css";
+
+const PAGE_SIZE = 6;
 
 function Friends()
 {
     const [message, setMessage] = useState('');
     const [search, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [showAddPanel, setShowAddPanel] = useState(false);
     const [friends, setFriends] = useState<any[]>([]);
     const [pending, setPending] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
 
     function getUserId() : string
     {
         const raw = localStorage.getItem('user_data');
         if (!raw) return '';
-        try
-        {
-            return JSON.parse(raw).id ?? '';
-        }
-        catch
-        {
-            return '';
-        }
+        try { return JSON.parse(raw).id ?? ''; } catch { return ''; }
     }
 
-    useEffect(() =>
-    {
-        loadFriends();
-    }, []);
+    useEffect(() => { loadFriends(); }, []);
 
     async function loadFriends() : Promise<void>
     {
@@ -41,26 +39,12 @@ function Friends()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.jwtToken)
-            {
-                storeToken({ accessToken: res.jwtToken });
-            }
-
-            if (res.error)
-            {
-                setMessage(res.error);
-            }
-            else
-            {
-                setFriends(res.friends ?? []);
-                setPending(res.pending ?? []);
-            }
+            if (res.error) setMessage(res.error);
+            else { setFriends(res.friends ?? []); setPending(res.pending ?? []); }
         }
-        catch (error: any)
-        {
-            setMessage(error.toString());
-        }
+        catch (error: any) { setMessage(error.toString()); }
     }
 
     async function doSearch(e: any) : Promise<void>
@@ -76,25 +60,12 @@ function Friends()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.jwtToken)
-            {
-                storeToken({ accessToken: res.jwtToken });
-            }
-
-            if (res.error)
-            {
-                setMessage(res.error);
-            }
-            else
-            {
-                setSearchResults(res.results ?? []);
-            }
+            if (res.error) setMessage(res.error);
+            else setSearchResults(res.results ?? []);
         }
-        catch (error: any)
-        {
-            setMessage(error.toString());
-        }
+        catch (error: any) { setMessage(error.toString()); }
     }
 
     async function handleSendRequest(friendId: string) : Promise<void>
@@ -109,26 +80,12 @@ function Friends()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.jwtToken)
-            {
-                storeToken({ accessToken: res.jwtToken });
-            }
-
-            if (res.error)
-            {
-                setMessage(res.error);
-            }
-            else
-            {
-                setMessage('Friend request sent');
-                loadFriends();
-            }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend request sent'); loadFriends(); }
         }
-        catch (error: any)
-        {
-            setMessage(error.toString());
-        }
+        catch (error: any) { setMessage(error.toString()); }
     }
 
     async function handleAccept(friendId: string) : Promise<void>
@@ -143,26 +100,12 @@ function Friends()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.jwtToken)
-            {
-                storeToken({ accessToken: res.jwtToken });
-            }
-
-            if (res.error)
-            {
-                setMessage(res.error);
-            }
-            else
-            {
-                setMessage('Friend request accepted');
-                loadFriends();
-            }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend request accepted'); loadFriends(); }
         }
-        catch (error: any)
-        {
-            setMessage(error.toString());
-        }
+        catch (error: any) { setMessage(error.toString()); }
     }
 
     async function handleDeny(friendId: string) : Promise<void>
@@ -177,26 +120,12 @@ function Friends()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.jwtToken)
-            {
-                storeToken({ accessToken: res.jwtToken });
-            }
-
-            if (res.error)
-            {
-                setMessage(res.error);
-            }
-            else
-            {
-                setMessage('Friend request denied');
-                loadFriends();
-            }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend request denied'); loadFriends(); }
         }
-        catch (error: any)
-        {
-            setMessage(error.toString());
-        }
+        catch (error: any) { setMessage(error.toString()); }
     }
 
     async function handleRemove(friendId: string) : Promise<void>
@@ -211,91 +140,96 @@ function Friends()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.jwtToken)
-            {
-                storeToken({ accessToken: res.jwtToken });
-            }
-
-            if (res.error)
-            {
-                setMessage(res.error);
-            }
-            else
-            {
-                setMessage('Friend removed');
-                loadFriends();
-            }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend removed'); loadFriends(); }
         }
-        catch (error: any)
-        {
-            setMessage(error.toString());
-        }
+        catch (error: any) { setMessage(error.toString()); }
     }
 
-    return(
-        <div id="friendsUIDiv">
-        <br />
-        Find Users: <input type="text" id="userSearchText" placeholder="Username"
-        value={search} onChange={(e) => setSearchValue(e.target.value)} />
-        <input type="submit" id="searchUsersButton" className="buttons" value="Search" onClick={doSearch} />
-        <br /><br />
+    const combined = [...pending, ...friends];
+    const totalPages = Math.max(1, Math.ceil(combined.length / PAGE_SIZE));
 
-        {searchResults.length > 0 &&
-        <div id="userSearchResults">
-            {searchResults.map((u) => (
-                <div key={u.id} className="friendRow">
-                <span>{u.username} ({u.firstName} {u.lastName})</span>{' '}
-                <input type="button" className="buttons" value="Add Friend"
-                onClick={() => handleSendRequest(u.id)} />
-                </div>
-            ))}
+    return(
+        <div>
+        <ProfileHeader />
+        <div className="profile-page">
+        <ProfileTabs actions={
+            <button type="button" className="action-button" onClick={() => setShowAddPanel(!showAddPanel)}>
+                Add Friend +
+            </button>
+        } />
+
+        {showAddPanel &&
+        <div className="add-panel">
+            <input type="text" placeholder="Search username..."
+            value={search} onChange={(e) => setSearchValue(e.target.value)} />
+            <button type="button" className="action-button action-button-small" onClick={doSearch}>Search</button>
+            <div>
+                {searchResults.map((u) => (
+                    <div key={u.id} className="add-result-row">
+                        <span>{u.username} ({u.firstName} {u.lastName})</span>
+                        <button type="button" className="action-button action-button-small"
+                        onClick={() => handleSendRequest(u.id)}>Add Friend</button>
+                    </div>
+                ))}
+            </div>
         </div>
         }
 
-        <br /><br />
-        <span id="inner-title">PENDING REQUESTS</span><br />
-        <div id="pendingList">
-            {pending.length === 0 && <span>No pending requests</span>}
-            {pending.map((p) => (
-                <div key={p.id} className="friendRow">
-                <span>
-                    {p.username} ({p.firstName} {p.lastName}) —{' '}
-                    {p.direction === 'received' ? 'wants to be friends' : 'request sent'}
-                </span>{' '}
-                {p.direction === 'received' ?
-                (
-                    <>
-                    <input type="button" className="buttons" value="Accept"
-                    onClick={() => handleAccept(p.id)} />
-                    <input type="button" className="buttons" value="Deny"
-                    onClick={() => handleDeny(p.id)} />
-                    </>
-                ) :
-                (
-                    <input type="button" className="buttons" value="Cancel"
-                    onClick={() => handleRemove(p.id)} />
-                )}
+        {friends.length > 0 &&
+        <>
+        <h2 className="section-title">Friends</h2>
+        {friends.map((f) => (
+            <div key={f.id} className="list-row">
+                <div>
+                    <div className="list-row-name">{f.username}</div>
+                    <div className="list-row-meta">Collection: — | Wishlist: —</div>
                 </div>
-            ))}
-        </div>
+                <button type="button" className="remove-button" onClick={() => handleRemove(f.id)}>Remove</button>
+            </div>
+        ))}
+        </>
+        }
 
-        <br /><br />
-        <span id="inner-title">MY FRIENDS</span><br />
-        <div id="friendsList">
-            {friends.length === 0 && <span>No friends yet</span>}
-            {friends.map((f) => (
-                <div key={f.id} className="friendRow">
-                <span>{f.username} ({f.firstName} {f.lastName})</span>{' '}
-                <input type="button" className="buttons" value="Remove Friend"
-                onClick={() => handleRemove(f.id)} />
+        {pending.length > 0 &&
+        <>
+        <h2 className="section-title">Pending</h2>
+        {pending.map((p) => (
+            <div key={p.id} className="list-row">
+                <div>
+                    <div className="list-row-name">{p.username}</div>
+                    <div className="list-row-meta">
+                        {p.direction === 'received' ? 'wants to be friends' : 'request sent'}
+                    </div>
                 </div>
-            ))}
+                <div className="list-row-actions">
+                    {p.direction === 'received' ?
+                    (
+                        <>
+                        <button type="button" className="action-button" onClick={() => handleAccept(p.id)}>Accept</button>
+                        <button type="button" className="remove-button" onClick={() => handleDeny(p.id)}>Deny</button>
+                        </>
+                    ) :
+                    (
+                        <button type="button" className="remove-button" onClick={() => handleRemove(p.id)}>Cancel</button>
+                    )}
+                </div>
+            </div>
+        ))}
+        </>
+        }
+
+        {friends.length === 0 && pending.length === 0 &&
+            <div className="empty-message">No friends or pending requests yet</div>
+        }
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        <p>{message}</p>
         </div>
-        <br />
-        <span id="friendsResult">{message}</span>
         </div>
     );
-};
+}
 
 export default Friends;
