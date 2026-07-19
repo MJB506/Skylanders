@@ -212,11 +212,12 @@ function SearchUI()
         catch (error: any) { setMessage(error.toString()); }
     }
 
-    function openDeletePopup(type: 'collection' | 'wishlist' | 'friend', id: string, label: string): void
-    {
-        setDeleteTarget({ type, id, label });
-        setShowDeletePopup(true);
-    }
+    //COMMENTED TO FIX PULL ERROR
+    // function openDeletePopup(type: 'collection' | 'wishlist' | 'friend', id: string, label: string): void
+    // {
+    //     setDeleteTarget({ type, id, label });
+    //     setShowDeletePopup(true);
+    // }
 
     async function confirmDelete(): Promise<void>
     {
