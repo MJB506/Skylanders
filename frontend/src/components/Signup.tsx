@@ -127,6 +127,16 @@ function Signup()
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+
+                <p className="password-requirements">
+                    Password must contain:
+                    <br />
+                    • At least 10 characters
+                    <br />
+                    • One uppercase letter
+                    <br />
+                    • One number
+                </p>
     
                 <input
                     type="password"
