@@ -133,9 +133,9 @@ function Signup()
                     <br />
                     • At least 10 characters
                     <br />
-                    • One uppercase letter
+                    • At least 1 uppercase letter
                     <br />
-                    • One number
+                    • At least 1 number
                 </p>
     
                 <input
