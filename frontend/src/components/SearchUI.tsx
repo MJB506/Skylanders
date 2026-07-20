@@ -44,6 +44,102 @@ const TYPES = [
 
 const ITEMS_PER_PAGE = 16;
 
+// dropdown checkbox style
+const dropdownStyle: React.CSSProperties =
+{
+    backgroundColor: '#1e3a5f',
+    borderRadius: '4px',
+    border: 'none',
+    color: '#fff',
+    padding: '0',
+    minWidth: '180px',
+    position: 'relative',
+    display: 'inline-block'
+};
+
+const dropdownButtonStyle: React.CSSProperties =
+{
+    width: '100%',
+    padding: '8px 12px',
+    backgroundColor: '#1e3a5f',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    textAlign: 'left',
+    fontSize: '14px'
+};
+
+const dropdownMenuStyle: React.CSSProperties =
+{
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    zIndex: 100,
+    backgroundColor: '#1e3a5f',
+    borderRadius: '4px',
+    minWidth: '180px',
+    padding: '8px 0',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
+};
+
+const checkboxLabelStyle: React.CSSProperties =
+{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 12px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    color: '#fff'
+};
+
+function MultiCheckbox({ label, options, selected, onChange }: {
+    label: string;
+    options: string[];
+    selected: string[];
+    onChange: (val: string[]) => void;
+})
+{
+    const [open, setOpen] = useState(false);
+
+    function toggle(option: string)
+    {
+        if (selected.includes(option))
+        {
+            onChange(selected.filter(s => s !== option));
+        }
+        else
+        {
+            onChange([...selected, option]);
+        }
+    }
+
+    const displayLabel = selected.length > 0 ? `${label} (${selected.length})` : label;
+
+    return (
+        <div style={{ ...dropdownStyle }}>
+            <button style={dropdownButtonStyle} onClick={() => setOpen(!open)}>
+                {displayLabel} ▾
+            </button>
+            {open && (
+                <div style={dropdownMenuStyle}>
+                    {options.map(opt => (
+                        <label key={opt} style={checkboxLabelStyle}>
+                            <input
+                                type="checkbox"
+                                checked={selected.includes(opt)}
+                                onChange={() => toggle(opt)}
+                            />
+                            {opt}
+                        </label>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 function SearchUI()
 {
     const [searchMode, setSearchMode] = useState<'figures' | 'users'>('figures');
@@ -52,10 +148,10 @@ function SearchUI()
     const [userResults, setUserResults] = useState<User[]>([]);
     const [message, setMessage] = useState('');
 
-    // filters
-    const [filterGame, setFilterGame] = useState('');
-    const [filterElement, setFilterElement] = useState('');
-    const [filterType, setFilterType] = useState('');
+    // multi-select filters
+    const [filterGames, setFilterGames] = useState<string[]>([]);
+    const [filterElements, setFilterElements] = useState<string[]>([]);
+    const [filterTypes, setFilterTypes] = useState<string[]>([]);
 
     // sorting
     const [sortAlpha, setSortAlpha] = useState('');
@@ -212,13 +308,6 @@ function SearchUI()
         catch (error: any) { setMessage(error.toString()); }
     }
 
-    //COMMENTED TO FIX PULL ERROR
-    // function openDeletePopup(type: 'collection' | 'wishlist' | 'friend', id: string, label: string): void
-    // {
-    //     setDeleteTarget({ type, id, label });
-    //     setShowDeletePopup(true);
-    // }
-
     async function confirmDelete(): Promise<void>
     {
         if (!deleteTarget) return;
@@ -270,20 +359,20 @@ function SearchUI()
 
     function clearFilters(): void
     {
-        setFilterGame('');
-        setFilterElement('');
-        setFilterType('');
+        setFilterGames([]);
+        setFilterElements([]);
+        setFilterTypes([]);
         setSortAlpha('');
         setSortGame('');
         setSortElement('');
     }
 
-    // apply filters
+    // apply multi-select filters
     let filteredFigures = figureResults.filter(fig =>
     {
-        if (filterGame && fig.Game !== filterGame) return false;
-        if (filterElement && fig.Element !== filterElement) return false;
-        if (filterType && fig.Type !== filterType) return false;
+        if (filterGames.length > 0 && !filterGames.includes(fig.Game)) return false;
+        if (filterElements.length > 0 && !filterElements.includes(fig.Element)) return false;
+        if (filterTypes.length > 0 && !filterTypes.includes(fig.Type)) return false;
         return true;
     });
 
@@ -336,21 +425,20 @@ function SearchUI()
     }
 
     return (
-        <div style={{ backgroundColor: '#09071d', minHeight: '100vh', color: '#fff' }}>
+        <div style={{ backgroundColor: '#0d1b2a', minHeight: '100vh', color: '#fff' }}>
 
-            {/* header - using shared PageTitle component */}
             <PageTitle />
 
             {/* nav */}
-            <nav style={{ backgroundColor: '#09071d', padding: '10px 20px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
+            <nav style={{ backgroundColor: '#0d1b2a', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
                 <a href="/profile" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
                 <a href="/search" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
-                <a href="/search?mode=users" style={{ color: '#fff', textDecoration: 'none' }}>Users</a>
+                <a href="/search" onClick={(e) => { e.preventDefault(); setSearchMode('users'); window.history.pushState({}, '', '/search'); }} style={{ color: '#fff', textDecoration: 'none' }}>Users</a>
             </nav>
 
-            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 24px' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 48px' }}>
 
                 {/* mode toggle */}
                 <div style={{ marginBottom: '20px', display: 'flex', gap: '12px' }}>
@@ -369,7 +457,7 @@ function SearchUI()
                 </div>
 
                 {/* title */}
-                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px'}}>
+                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px' }}>
                     {searchMode === 'figures' ? 'Figures' : 'Users'}
                 </h2>
 
@@ -394,38 +482,29 @@ function SearchUI()
                 {/* figure filters */}
                 {searchMode === 'figures' && (
                     <>
-                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px' }}>
-                            <span style={{ color: '#aaa', fontSize: '14px' }}>Filters:</span>
-                            <select value={filterGame} onChange={e => { setFilterGame(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center"}}>
-                                <option value="">Game</option>
-                                {GAMES.map(g => <option key={g} value={g}>{g}</option>)}
-                            </select>
-                            <select value={filterElement} onChange={e => { setFilterElement(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
-                                <option value="">Element</option>
-                                {ELEMENTS.map(el => <option key={el} value={el}>{el}</option>)}
-                            </select>
-                            <select value={filterType} onChange={e => { setFilterType(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
-                                <option value="">Type</option>
-                                {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                            </select>
-                            <button onClick={clearFilters} style={{ padding: '6px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', textAlign: "center", marginLeft: "auto" }}>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start', marginBottom: '10px' }}>
+                            <span style={{ color: '#aaa', fontSize: '14px', paddingTop: '8px' }}>Filters:</span>
+                            <MultiCheckbox label="Game" options={GAMES} selected={filterGames} onChange={(v) => { setFilterGames(v); setFigurePage(1); }} />
+                            <MultiCheckbox label="Element" options={ELEMENTS} selected={filterElements} onChange={(v) => { setFilterElements(v); setFigurePage(1); }} />
+                            <MultiCheckbox label="Type" options={TYPES} selected={filterTypes} onChange={(v) => { setFilterTypes(v); setFigurePage(1); }} />
+                            <button onClick={clearFilters} style={{ padding: '8px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', marginLeft: 'auto' }}>
                                 Clear Filters
                             </button>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
                             <span style={{ color: '#aaa', fontSize: '14px' }}>Sort By:</span>
-                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
                                 <option value="">Alphabetically</option>
                                 <option value="asc">A → Z</option>
                                 <option value="desc">Z → A</option>
                             </select>
-                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
                                 <option value="">Game</option>
                                 <option value="asc">1st → 6th</option>
                                 <option value="desc">6th → 1st</option>
                             </select>
-                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
                                 <option value="">Element</option>
                                 <option value="asc">Air → Water</option>
                                 <option value="desc">Water → Air</option>
