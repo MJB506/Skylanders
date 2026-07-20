@@ -1,9 +1,3 @@
-/* ProfileStyles.css
-   Matches LoginStyles.css's palette and naming conventions.
-   Import directly in each component that needs it, e.g.:
-   import "./ProfileStyles.css";
-*/
-
 .page-header {
     background: #8ed6ef;
     display: flex;
@@ -106,8 +100,8 @@
 }
 
 .remove-button {
-    background: transparent;
-    color: #ff7070;
+    background: #ff7070;
+    color: black;
     border: 2px solid #ff7070;
     border-radius: 6px;
     height: 44px;
@@ -118,8 +112,9 @@
 }
 
 .remove-button:hover {
-    background: #ff7070;
-    color: #08111f;
+    background: #e85c5c;
+    border-color: #e85c5c;
+    color: black;
 }
 
 .remove-button-small {
