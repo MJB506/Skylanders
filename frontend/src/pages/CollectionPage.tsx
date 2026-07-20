@@ -7,7 +7,6 @@ const CollectionPage = () =>
     return(
         <div>
         <PageTitle />
-        <LoggedInName />
         <Collection />
         </div>
     );
