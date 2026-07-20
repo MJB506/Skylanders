@@ -171,7 +171,7 @@ exports.setApp = function(app, client)
         res.status(200).json({
             results: _ret,
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -327,7 +327,7 @@ exports.setApp = function(app, client)
         res.status(200).json({
             results: _ret,
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -379,45 +379,45 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
     //  new
     app.post('/api/removefromwishlist', async (req, res, next) =>
-{
-    const { userId, figureId, jwtToken } = req.body;
-    var error = '';
-
-    if (token.isExpired(jwtToken))
     {
-        return res.status(200).json({
-            error: 'The JWT is no longer valid',
-            jwtToken: ''
+        const { userId, figureId, jwtToken } = req.body;
+        var error = '';
+    
+        if (token.isExpired(jwtToken))
+        {
+            return res.status(200).json({
+                error: 'The JWT is no longer valid',
+                jwtToken: ''
+            });
+        }
+    
+        try
+        {
+            const db = client.db('Skylanders');
+            await db.collection('Wishlist').deleteOne({
+                _id: {
+                    UserId: new ObjectId(userId),
+                    FigureId: new ObjectId(figureId)
+                }
+            });
+        }
+        catch(e)
+        {
+            error = e.toString();
+        }
+    
+        const refreshedToken = token.refresh(jwtToken);
+    
+        res.status(200).json({
+            error,
+            jwtToken: refreshedToken.accessToken
         });
-    }
-
-    try
-    {
-        const db = client.db('Skylanders');
-        await db.collection('Wishlist').deleteOne({
-            _id: {
-                UserId: new ObjectId(userId),
-                FigureId: new ObjectId(figureId)
-            }
-        });
-    }
-    catch(e)
-    {
-        error = e.toString();
-    }
-
-    const refreshedToken = token.refresh(jwtToken);
-
-    res.status(200).json({
-        error,
-        jwtToken: refreshedToken
-    });
     });
 
     //  new
@@ -455,7 +455,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -561,7 +561,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -610,7 +610,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -666,7 +666,7 @@ exports.setApp = function(app, client)
         res.status(200).json({
             results: _ret,
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -735,7 +735,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -789,7 +789,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -836,7 +836,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -885,7 +885,7 @@ exports.setApp = function(app, client)
 
         res.status(200).json({
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
@@ -1071,7 +1071,7 @@ exports.setApp = function(app, client)
             friends,
             pending,
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
