@@ -61,9 +61,13 @@ function Login()
                 const decoded: any =
                     jwtDecode(accessToken);
 
+                console.log("ACCESS TOKEN:", accessToken);
+                console.log("DECODED TOKEN:", decoded);
+                console.log("USERNAME:", decoded.username);
+
                 const user =
                 {
-                    username: decoded.username,
+                    username: decoded.Username,
                     id: decoded.userId
                 };
 
