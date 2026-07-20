@@ -47,8 +47,6 @@ exports.setApp = function(app, client)
         //  new user
         const newUser =
         {
-            FirstName: '',
-            LastName: '',
             Username: username,
             Password: password,
             Email: email,
