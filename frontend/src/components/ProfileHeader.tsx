@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from "react-router-dom";
 import logo from "../../images/Games/Skylanders_Logo.webp";
 import "./ProfileStyles.css";
 
@@ -10,7 +10,7 @@ function ProfileHeader()
         localStorage.removeItem("user_data");
         window.location.href = '/';
     }
-    import { NavLink, useLocation } from "react-router-dom";
+    
 
     const location = useLocation();
     
