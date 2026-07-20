@@ -428,15 +428,15 @@ function SearchUI()
         <div style={{ backgroundColor: '#09071d', minHeight: '100vh', color: '#fff' }}>
 
             <PageTitle />
-
+            <ProfileHeader />
             {/* nav */}
-            <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
+            {/* <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
                 <a href="/profile" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
                 <a href="/search" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
                 <a href="/search" onClick={(e) => { e.preventDefault(); setSearchMode('users'); window.history.pushState({}, '', '/search'); }} style={{ color: '#fff', textDecoration: 'none' }}>Users</a>
-            </nav>
+            </nav> */}
 
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 48px' }}>
 
