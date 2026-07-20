@@ -463,10 +463,16 @@ exports.setApp = function(app, client)
         //  every user searches for same figures so change
     app.post('/api/searchfigures', async (req, res, next) =>
     {
+        console.log("SEARCH FIGURES ENDPOINT HIT");
         // incoming: userId, search
         // outgoing: results[], error
         var error = '';
         const { search, jwtToken } = req.body;
+
+        console.log("Body:", req.body);
+        console.log("Received token:", jwtToken);
+
+        
         var _search = search.trim();
         const db = client.db('Skylanders');
         const results = await db.collection('Figure').find({
