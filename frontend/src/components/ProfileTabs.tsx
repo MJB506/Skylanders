@@ -10,7 +10,7 @@ function ProfileTabs({ actions }: ProfileTabsProps)
 {
     let _ud : any = localStorage.getItem('user_data');
     let ud = _ud ? JSON.parse(_ud) : {};
-    let username : string = ud.username ?? '';
+    let username : string = ud.Username ?? '';
 
     return(
         <>
