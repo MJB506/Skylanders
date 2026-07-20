@@ -17,7 +17,7 @@ function ProfileHeader()
     const profileActive =
         location.pathname === "/collection" ||
         location.pathname === "/wishlist" ||
-        location.pathname === "/Friends";
+        location.pathname === "/friends";
 
     return(
         <>
