@@ -21,7 +21,7 @@ function ProfileHeader()
     return(
         <>
         <div className="page-header">
-            <img src="/images/Games/Skylanders_Logo.webp" alt="Skylanders Logo" />
+            <img src="/images/Games/Skylanders_Logo.webp" alt="Skylanders Logo" className="logo"/>
         </div>
         <div className="top-nav">
             <NavLink to="/collection" className={() => (profileActive ? "active" : "")}>Profile</NavLink>
