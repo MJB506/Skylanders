@@ -109,8 +109,7 @@ exports.setApp = function(app, client)
         const userId = user._id.toString();
 
         const ret = token.createToken(
-            user.FirstName,
-            user.LastName,
+            user.Username,
             userId
         );
 
