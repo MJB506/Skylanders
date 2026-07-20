@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
-import PageTitle from './PageTitle';
 import ProfileHeader from './ProfileHeader';
 
 interface Figure
