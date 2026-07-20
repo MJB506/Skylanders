@@ -63,8 +63,7 @@ function Login()
 
                 const user =
                 {
-                    firstName: decoded.firstName,
-                    lastName: decoded.lastName,
+                    username = decoded.Username;
                     id: decoded.userId
                 };
 
