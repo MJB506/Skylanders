@@ -34,11 +34,11 @@ function Signup()
         }
 
         // Username validation
-        const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
 
         if (!usernameRegex.test(username))
         {
-            setMessage("Username may only contain letters and numbers.");
+            setMessage("Username may only contain letters, numbers, or underscores.");
             return;
         }
 
