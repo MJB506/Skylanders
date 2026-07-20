@@ -188,6 +188,10 @@ function SearchUI()
 
             const res = JSON.parse(await response.text());
 
+            if (res.jwtToken && res.jwtToken !== '')
+            {
+                localStorage.setItem('jwtToken', res.jwtToken);
+            }
             if (res.error && res.error !== '')
             {
                 setMessage(res.error);
@@ -226,6 +230,11 @@ function SearchUI()
 
             const res = JSON.parse(await response.text());
 
+            if (res.jwtToken && res.jwtToken !== '')
+            {
+                localStorage.setItem('jwtToken', res.jwtToken);
+            }
+            
             if (res.error && res.error !== '')
             {
                 setMessage(res.error);
@@ -264,6 +273,10 @@ function SearchUI()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = JSON.parse(await response.text());
+            if (res.jwtToken && res.jwtToken !== '')
+            {
+                localStorage.setItem('jwtToken', res.jwtToken);
+            }
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Added to collection!');
         }
@@ -283,6 +296,10 @@ function SearchUI()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = JSON.parse(await response.text());
+            if (res.jwtToken && res.jwtToken !== '')
+            {
+                localStorage.setItem('jwtToken', res.jwtToken);
+            }
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Added to wishlist!');
         }
@@ -302,6 +319,10 @@ function SearchUI()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = JSON.parse(await response.text());
+            if (res.jwtToken && res.jwtToken !== '')
+            {
+                localStorage.setItem('jwtToken', res.jwtToken);
+            }
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Friend request sent!');
         }
@@ -342,6 +363,10 @@ function SearchUI()
             });
 
             const res = JSON.parse(await response.text());
+            if (res.jwtToken && res.jwtToken !== '')
+            {
+                localStorage.setItem('jwtToken', res.jwtToken);
+            }
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Removed successfully.');
         }
