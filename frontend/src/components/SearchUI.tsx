@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
 import PageTitle from './PageTitle';
-import ProfileTabs from './ProfileTabs';
+import ProfileHeader from './ProfileHeader';
 
 interface Figure
 {
