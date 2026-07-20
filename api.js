@@ -494,11 +494,11 @@ exports.setApp = function(app, client)
 
         const refreshedToken =
             token.refresh(jwtToken);
-
+        
         res.status(200).json({
             results: _ret,
             error,
-            jwtToken: refreshedToken
+            jwtToken: refreshedToken.accessToken
         });
     });
 
