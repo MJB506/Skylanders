@@ -8,9 +8,15 @@ interface ProfileTabsProps {
 
 function ProfileTabs({ actions }: ProfileTabsProps)
 {
-    let _ud : any = localStorage.getItem('user_data');
+    let _ud = localStorage.getItem('user_data');
+    console.log("Raw user_data:", _ud);
+
     let ud = _ud ? JSON.parse(_ud) : {};
-    let username : string = ud.username ?? '';
+    console.log("Parsed user_data:", ud);
+
+    let username: string = ud.username ?? '';
+
+    console.log("Profile username:", username);
 
     return(
         <>
