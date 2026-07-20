@@ -478,6 +478,9 @@ exports.setApp = function(app, client)
         }).toArray();
         var _ret = [];
 
+        console.log("Received token:", jwtToken);
+
+        
         if (token.isExpired(jwtToken))
         {
             return res.status(200).json({
