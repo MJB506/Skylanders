@@ -10,6 +10,14 @@ function ProfileHeader()
         localStorage.removeItem("user_data");
         window.location.href = '/';
     }
+    import { NavLink, useLocation } from "react-router-dom";
+
+    const location = useLocation();
+    
+    const profileActive =
+        location.pathname === "/collection" ||
+        location.pathname === "/wishlist" ||
+        location.pathname === "/Friends";
 
     return(
         <>
@@ -17,11 +25,8 @@ function ProfileHeader()
             <img src={logo} alt="Skylanders Logo" className="logo" />
         </div>
         <div className="top-nav">
-            <NavLink to="/collection" className={({ isActive }) => isActive ? 'active' : ''}>Profile</NavLink>
+            <NavLink to="/collection" className={() => (profileActive ? "active" : "")}>Profile</NavLink>
             <NavLink to="/search" end className={({ isActive }) => isActive ? 'active' : ''}>Search</NavLink>
-            {/* <NavLink to="/search?mode=users" className={({ isActive }) =>
-                (isActive || window.location.search.includes('mode=users')) ? 'active' : ''
-            }>Users</NavLink> */}
             <a href="#" onClick={doLogout}>Log Out</a>
         </div>
         </>
