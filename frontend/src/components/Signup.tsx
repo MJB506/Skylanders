@@ -33,6 +33,15 @@ function Signup()
             return;
         }
 
+        // Username validation
+        const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+
+        if (!usernameRegex.test(username))
+        {
+            setMessage("Username may only contain letters and numbers.");
+            return;
+        }
+
         // Password validation
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{10,}$/;
 
