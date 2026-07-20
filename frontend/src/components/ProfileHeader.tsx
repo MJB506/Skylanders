@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import logo from "../../images/Games/Skylanders_Logo.webp";
 import "./ProfileStyles.css";
 
 function ProfileHeader()
@@ -13,15 +14,14 @@ function ProfileHeader()
     return(
         <>
         <div className="page-header">
-            {/* Swap in your real logo file once it's in /public, e.g.:
-                <img src="/skylanders-logo.png" className="logo" alt="Skylanders" />
-                Text fallback for now so this renders without an asset. */}
-            <h1 style={{ color: '#09071d', margin: 0, fontSize: '48px' }}>SKYLANDERS</h1>
+            <img src={logo} alt="Skylanders Logo" className="logo" />
         </div>
         <div className="top-nav">
             <NavLink to="/collection" className={({ isActive }) => isActive ? 'active' : ''}>Profile</NavLink>
-            <NavLink to="/cards" className={({ isActive }) => isActive ? 'active' : ''}>Figures</NavLink>
-            <NavLink to="/friends" className={({ isActive }) => isActive ? 'active' : ''}>Users</NavLink>
+            <NavLink to="/search" end className={({ isActive }) => isActive ? 'active' : ''}>Figures</NavLink>
+            <NavLink to="/search?mode=users" className={({ isActive, isPending }) =>
+                (isActive || window.location.search.includes('mode=users')) ? 'active' : ''
+            }>Users</NavLink>
             <a href="#" onClick={doLogout}>Log Out</a>
         </div>
         </>
