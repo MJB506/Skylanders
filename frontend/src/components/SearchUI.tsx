@@ -425,12 +425,12 @@ function SearchUI()
     }
 
     return (
-        <div style={{ backgroundColor: '#0d1b2a', minHeight: '100vh', color: '#fff' }}>
+        <div style={{ backgroundColor: '#09071d', minHeight: '100vh', color: '#fff' }}>
 
             <PageTitle />
 
             {/* nav */}
-            <nav style={{ backgroundColor: '#0d1b2a', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
+            <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
                 <a href="/profile" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
                 <a href="/search" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
@@ -457,7 +457,7 @@ function SearchUI()
                 </div>
 
                 {/* title */}
-                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px' }}>
+                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px'}}>
                     {searchMode === 'figures' ? 'Figures' : 'Users'}
                 </h2>
 
