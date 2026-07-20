@@ -10,11 +10,11 @@ function ProfileTabs({ actions }: ProfileTabsProps)
 {
     let _ud : any = localStorage.getItem('user_data');
     let ud = _ud ? JSON.parse(_ud) : {};
-    let firstName : string = ud.firstName ?? '';
+    let username : string = ud.username ?? '';
 
     return(
         <>
-        <h2 className="profile-title">Profile - <span>{firstName || 'Name'}</span></h2>
+        <h2 className="profile-title">Profile - <span>{username || 'Name'}</span></h2>
         <div className="tabs-row">
             <div className="tabs">
                 <NavLink to="/collection" className={({ isActive }) => isActive ? 'active' : ''}>Collection</NavLink>
