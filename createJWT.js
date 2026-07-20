@@ -36,8 +36,7 @@ function refresh(token)
     const ud = jwt.decode(token);
 
     return createToken(
-        ud.firstName,
-        ud.lastName,
+        ud.username,
         ud.userId
     );
 }
