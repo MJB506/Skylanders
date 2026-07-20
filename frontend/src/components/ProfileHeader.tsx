@@ -18,10 +18,10 @@ function ProfileHeader()
         </div>
         <div className="top-nav">
             <NavLink to="/collection" className={({ isActive }) => isActive ? 'active' : ''}>Profile</NavLink>
-            <NavLink to="/search" end className={({ isActive }) => isActive ? 'active' : ''}>Figures</NavLink>
-            <NavLink to="/search?mode=users" className={({ isActive }) =>
+            <NavLink to="/search" end className={({ isActive }) => isActive ? 'active' : ''}>Search</NavLink>
+            {/* <NavLink to="/search?mode=users" className={({ isActive }) =>
                 (isActive || window.location.search.includes('mode=users')) ? 'active' : ''
-            }>Users</NavLink>
+            }>Users</NavLink> */}
             <a href="#" onClick={doLogout}>Log Out</a>
         </div>
         </>
