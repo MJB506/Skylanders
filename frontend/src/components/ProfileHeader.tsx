@@ -1,5 +1,4 @@
 import { NavLink, useLocation } from "react-router-dom";
-import logo from "../../images/Games/Skylanders_Logo.webp";
 import "./ProfileStyles.css";
 
 function ProfileHeader()
@@ -22,7 +21,7 @@ function ProfileHeader()
     return(
         <>
         <div className="page-header">
-            <img src={logo} alt="Skylanders Logo" className="logo" />
+            <img src="/images/Games/Skylanders_Logo.webp" alt="Skylanders Logo" />
         </div>
         <div className="top-nav">
             <NavLink to="/collection" className={() => (profileActive ? "active" : "")}>Profile</NavLink>
