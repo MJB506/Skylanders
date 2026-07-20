@@ -1,13 +1,12 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-function createToken(fn, ln, id)
+function createToken(username, id)
 {
     const user =
     {
         userId: id,
-        firstName: fn,
-        lastName: ln
+        username: username
     };
 
     const accessToken = jwt.sign(
