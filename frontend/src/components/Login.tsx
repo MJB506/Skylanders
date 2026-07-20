@@ -58,6 +58,10 @@ function Login()
 
                 storeToken(res);
 
+                console.log("After storing:",
+                    localStorage.getItem("token_data")
+                );
+
                 const decoded: any =
                     jwtDecode(accessToken);
 
