@@ -25,7 +25,7 @@ interface User
 const GAMES = [
     "Skylanders: Spyro's Adventure",
     "Skylanders: Giants",
-    "Skylanders: SWAP Force",
+    "Skylanders: SWAP-Force",
     "Skylanders: Trap Team",
     "Skylanders: SuperChargers",
     "Skylanders: Imaginators"
@@ -336,21 +336,21 @@ function SearchUI()
     }
 
     return (
-        <div style={{ backgroundColor: '#0d1b2a', minHeight: '100vh', color: '#fff' }}>
+        <div style={{ backgroundColor: '#09071d', minHeight: '100vh', color: '#fff' }}>
 
             {/* header - using shared PageTitle component */}
             <PageTitle />
 
             {/* nav */}
-            <nav style={{ backgroundColor: '#0d1b2a', padding: '10px 20px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
-                <a href="/profile" style={{ color: '#7dd8f8', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
+            <nav style={{ backgroundColor: '#09071d', padding: '10px 20px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
+                <a href="/profile" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
-                <a href="/search" style={{ color: '#7dd8f8', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
+                <a href="/search" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
-                <a href="/search?mode=users" style={{ color: '#7dd8f8', textDecoration: 'none' }}>Users</a>
+                <a href="/search?mode=users" style={{ color: '#fff', textDecoration: 'none' }}>Users</a>
             </nav>
 
-            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 16px' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 24px' }}>
 
                 {/* mode toggle */}
                 <div style={{ marginBottom: '20px', display: 'flex', gap: '12px' }}>
@@ -369,7 +369,7 @@ function SearchUI()
                 </div>
 
                 {/* title */}
-                <h2 style={{ color: '#7dd8f8', marginBottom: '16px' }}>
+                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px'}}>
                     {searchMode === 'figures' ? 'Figures' : 'Users'}
                 </h2>
 
@@ -396,37 +396,37 @@ function SearchUI()
                     <>
                         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px' }}>
                             <span style={{ color: '#aaa', fontSize: '14px' }}>Filters:</span>
-                            <select value={filterGame} onChange={e => { setFilterGame(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none' }}>
-                                <option value="">Game ∧</option>
+                            <select value={filterGame} onChange={e => { setFilterGame(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center"}}>
+                                <option value="">Game</option>
                                 {GAMES.map(g => <option key={g} value={g}>{g}</option>)}
                             </select>
-                            <select value={filterElement} onChange={e => { setFilterElement(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none' }}>
-                                <option value="">Element ∧</option>
+                            <select value={filterElement} onChange={e => { setFilterElement(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                                <option value="">Element</option>
                                 {ELEMENTS.map(el => <option key={el} value={el}>{el}</option>)}
                             </select>
-                            <select value={filterType} onChange={e => { setFilterType(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none' }}>
-                                <option value="">Type ∧</option>
+                            <select value={filterType} onChange={e => { setFilterType(e.target.value); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                                <option value="">Type</option>
                                 {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
-                            <button onClick={clearFilters} style={{ padding: '6px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+                            <button onClick={clearFilters} style={{ padding: '6px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', textAlign: "center", marginLeft: "auto" }}>
                                 Clear Filters
                             </button>
                         </div>
 
                         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
                             <span style={{ color: '#aaa', fontSize: '14px' }}>Sort By:</span>
-                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none' }}>
-                                <option value="">Alphabetically ∧</option>
+                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                                <option value="">Alphabetically</option>
                                 <option value="asc">A → Z</option>
                                 <option value="desc">Z → A</option>
                             </select>
-                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none' }}>
-                                <option value="">Game ∧</option>
-                                <option value="asc">Game 1 → 6</option>
-                                <option value="desc">Game 6 → 1</option>
+                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                                <option value="">Game</option>
+                                <option value="asc">1st → 6th</option>
+                                <option value="desc">6th → 1st</option>
                             </select>
-                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none' }}>
-                                <option value="">Element ∧</option>
+                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', textAlign: "center" }}>
+                                <option value="">Element</option>
                                 <option value="asc">Air → Water</option>
                                 <option value="desc">Water → Air</option>
                             </select>
