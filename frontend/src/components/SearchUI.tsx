@@ -428,7 +428,6 @@ function SearchUI()
     return (
         <div style={{ backgroundColor: '#09071d', minHeight: '100vh', color: '#fff' }}>
 
-            <PageTitle />
             <ProfileHeader />
             {/* nav */}
             {/* <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
