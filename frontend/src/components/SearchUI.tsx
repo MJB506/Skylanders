@@ -177,6 +177,9 @@ function SearchUI()
 
         try
         {
+            console.log("Sending token:", jwtToken);
+
+            
             const jwtToken = retrieveToken();
             const obj = { search: searchText, jwtToken };
             const response = await fetch(buildPath('api/searchfigures'),
