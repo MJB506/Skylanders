@@ -228,12 +228,15 @@ body{
     color: #91dbf3;
     font-size: 0.9rem;
     text-align: left;
-    margin-top: 0px;
-    margin-bottom: 1px;
+
+    margin: -6px 0 8px 0;
+    padding: 0;
+
     width: 100%;
     max-width: 350px;
-    align-self: left;
     line-height: 1.4;
+
+    align-self: left;
 }
 
 
