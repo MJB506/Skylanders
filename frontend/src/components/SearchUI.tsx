@@ -394,6 +394,11 @@ function SearchUI()
     async function doAddToCollection(figureId: string, boxed: boolean): Promise<void>
     {
         setBoxedDropdownId(null);
+        if (userCollection.includes(figureId))
+        {
+            setMessage('This figure is already in your collection!');
+            return;
+        }
         try
         {
             const jwtToken = retrieveToken();
@@ -712,8 +717,8 @@ function SearchUI()
                                     <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px', position: 'relative' }}>
                                         <div style={{ position: 'relative' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
                                             <button
-                                                onClick={() => !userCollection.includes(fig._id) && setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
-                                                style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: userCollection.includes(fig._id) ? 'default' : 'pointer', fontSize: '12px' }}
+                                                onClick={() => setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
+                                                style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
                                             >
                                                 {userCollection.includes(fig._id) ? '✓ Col' : '+ Col'}
                                             </button>
