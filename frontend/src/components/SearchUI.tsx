@@ -742,10 +742,10 @@ function SearchUI()
                                     <p style={{ marginTop: '8px', fontSize: '13px', color: '#fff' }}>{fig.Name}</p>
                                     <p style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{GAME_MAP[fig.Game] || ''}</p>
                                     <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px', position: 'relative' }}>
-                                        <div style={{ position: 'relative' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
+                                        <div style={{ position: 'relative', display: 'inline-block', width: '64px' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
                                             <button
                                                 onClick={() => setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
-                                                style={{ padding: '4px 10px', width: '64px', backgroundColor: userCollection.some(c => c.id === fig._id) ? '#555' : '#7dd8f8', color: userCollection.some(c => c.id === fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                                style={{ padding: '4px 10px', width: '100%', backgroundColor: userCollection.some(c => c.id === fig._id) ? '#555' : '#7dd8f8', color: userCollection.some(c => c.id === fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
                                             >
                                                 {userCollection.some(c => c.id === fig._id) ? '✓ Col' : '+ Col'}
                                             </button>
