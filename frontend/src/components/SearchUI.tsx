@@ -745,7 +745,7 @@ function SearchUI()
                                         <div style={{ position: 'relative' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
                                             <button
                                                 onClick={() => setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
-                                                style={{ padding: '4px 10px', backgroundColor: userCollection.some(c => c.id === fig._id) ? '#555' : '#7dd8f8', color: userCollection.some(c => c.id === fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                                style={{ padding: '4px 10px', width: '64px', backgroundColor: userCollection.some(c => c.id === fig._id) ? '#555' : '#7dd8f8', color: userCollection.some(c => c.id === fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
                                             >
                                                 {userCollection.some(c => c.id === fig._id) ? '✓ Col' : '+ Col'}
                                             </button>
@@ -770,7 +770,7 @@ function SearchUI()
                                                 </div>
                                             )}
                                         </div>
-                                        <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', backgroundColor: userWishlist.includes(fig._id) ? '#555' : '#7dd8f8', color: userWishlist.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                                        <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', width: '64px', backgroundColor: userWishlist.includes(fig._id) ? '#555' : '#7dd8f8', color: userWishlist.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                                             {userWishlist.includes(fig._id) ? '✓ Wish' : '+ Wish'}
                                         </button>
                                     </div>
