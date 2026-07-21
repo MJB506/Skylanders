@@ -11,166 +11,166 @@ const PAGE_SIZE = 6;
 
 function Friends()
 {
-    const navigate = useNavigate();
-    const [message, setMessage] = useState('');
-    const [friends, setFriends] = useState<any[]>([]);
-    const [pending, setPending] = useState<any[]>([]);
-    const [page, setPage] = useState(1);
+    const navigate = useNavigate();
+    const [message, setMessage] = useState('');
+    const [friends, setFriends] = useState<any[]>([]);
+    const [pending, setPending] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
 
-    function getUserId() : string
-    {
-        const raw = localStorage.getItem('user_data');
-        if (!raw) return '';
-        try { return JSON.parse(raw).id ?? ''; } catch { return ''; }
-    }
+    function getUserId() : string
+    {
+        const raw = localStorage.getItem('user_data');
+        if (!raw) return '';
+        try { return JSON.parse(raw).id ?? ''; } catch { return ''; }
+    }
 
-    useEffect(() => { loadFriends(); }, []);
+    useEffect(() => { loadFriends(); }, []);
 
-    async function loadFriends() : Promise<void>
-    {
-        try
-        {
-            const obj = { userId: getUserId(), jwtToken: retrieveToken() };
-            const response = await fetch(buildPath('api/getfriendslist'),
-            {
-                method: 'POST',
-                body: JSON.stringify(obj),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const res = await response.json();
-            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
+    async function loadFriends() : Promise<void>
+    {
+        try
+        {
+            const obj = { userId: getUserId(), jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/getfriendslist'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.error) setMessage(res.error);
-            else { setFriends(res.friends ?? []); setPending(res.pending ?? []); }
-        }
-        catch (error: any) { setMessage(error.toString()); }
-    }
+            if (res.error) setMessage(res.error);
+            else { setFriends(res.friends ?? []); setPending(res.pending ?? []); }
+        }
+        catch (error: any) { setMessage(error.toString()); }
+    }
 
-    async function handleAccept(friendId: string) : Promise<void>
-    {
-        try
-        {
-            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
-            const response = await fetch(buildPath('api/acceptfriendrequest'),
-            {
-                method: 'POST',
-                body: JSON.stringify(obj),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const res = await response.json();
-            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
+    async function handleAccept(friendId: string) : Promise<void>
+    {
+        try
+        {
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/acceptfriendrequest'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.error) setMessage(res.error);
-            else { setMessage('Friend request accepted'); loadFriends(); }
-        }
-        catch (error: any) { setMessage(error.toString()); }
-    }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend request accepted'); loadFriends(); }
+        }
+        catch (error: any) { setMessage(error.toString()); }
+    }
 
-    async function handleDeny(friendId: string) : Promise<void>
-    {
-        try
-        {
-            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
-            const response = await fetch(buildPath('api/denyfriendrequest'),
-            {
-                method: 'POST',
-                body: JSON.stringify(obj),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const res = await response.json();
-            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
+    async function handleDeny(friendId: string) : Promise<void>
+    {
+        try
+        {
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/denyfriendrequest'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.error) setMessage(res.error);
-            else { setMessage('Friend request denied'); loadFriends(); }
-        }
-        catch (error: any) { setMessage(error.toString()); }
-    }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend request denied'); loadFriends(); }
+        }
+        catch (error: any) { setMessage(error.toString()); }
+    }
 
-    async function handleRemove(friendId: string) : Promise<void>
-    {
-        try
-        {
-            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
-            const response = await fetch(buildPath('api/removefriend'),
-            {
-                method: 'POST',
-                body: JSON.stringify(obj),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const res = await response.json();
-            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
+    async function handleRemove(friendId: string) : Promise<void>
+    {
+        try
+        {
+            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
+            const response = await fetch(buildPath('api/removefriend'),
+            {
+                method: 'POST',
+                body: JSON.stringify(obj),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const res = await response.json();
+            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
 
-            if (res.error) setMessage(res.error);
-            else { setMessage('Friend removed'); loadFriends(); }
-        }
-        catch (error: any) { setMessage(error.toString()); }
-    }
+            if (res.error) setMessage(res.error);
+            else { setMessage('Friend removed'); loadFriends(); }
+        }
+        catch (error: any) { setMessage(error.toString()); }
+    }
 
-    const combined = [...pending, ...friends];
-    const totalPages = Math.max(1, Math.ceil(combined.length / PAGE_SIZE));
+    const combined = [...pending, ...friends];
+    const totalPages = Math.max(1, Math.ceil(combined.length / PAGE_SIZE));
 
-    return(
-        <div>
-        <ProfileHeader />
-        <div className="profile-page">
-        <ProfileTabs actions={
-            <button type="button" className="action-button" onClick={() => navigate('/search?mode=users')}>
-                Add Friend +
-            </button>
-        } />
+    return(
+        <div>
+        <ProfileHeader />
+        <div className="profile-page">
+        <ProfileTabs actions={
+            <button type="button" className="action-button" onClick={() => navigate('/search?mode=users')}>
+                Add Friend +
+            </button>
+        } />
 
-        {friends.length > 0 &&
-        <>
-        <h2 className="section-title">Friends</h2>
-        {friends.map((f) => (
-            <div key={f.id} className="list-row">
-                <div>
-                    <div className="list-row-name">{f.username}</div>
-                    <div className="list-row-meta">Collection: — | Wishlist: —</div>
-                </div>
-                <button type="button" className="remove-button" onClick={() => handleRemove(f.id)}>Remove</button>
-            </div>
-        ))}
-        </>
-        }
+        {friends.length > 0 &&
+        <>
+        <h2 className="section-title">Friends</h2>
+        {friends.map((f) => (
+            <div key={f.id} className="list-row">
+                <div>
+                    <div className="list-row-name">{f.username}</div>
+                    <div className="list-row-meta">Collection: — | Wishlist: —</div>
+                </div>
+                <button type="button" className="remove-button" onClick={() => handleRemove(f.id)}>Remove</button>
+            </div>
+        ))}
+        </>
+        }
 
-        {pending.length > 0 &&
-        <>
-        <h2 className="section-title">Pending</h2>
-        {pending.map((p) => (
-            <div key={p.id} className="list-row">
-                <div>
-                    <div className="list-row-name">{p.username}</div>
-                    <div className="list-row-meta">
-                        {p.direction === 'received' ? 'wants to be friends' : 'request sent'}
-                    </div>
-                </div>
-                <div className="list-row-actions">
-                    {p.direction === 'received' ?
-                    (
-                        <>
-                        <button type="button" className="action-button" onClick={() => handleAccept(p.id)}>Accept</button>
-                        <button type="button" className="remove-button" onClick={() => handleDeny(p.id)}>Deny</button>
-                        </>
-                    ) :
-                    (
-                        <button type="button" className="remove-button" onClick={() => handleRemove(p.id)}>Cancel</button>
-                    )}
-                </div>
-            </div>
-        ))}
-        </>
-        }
+        {pending.length > 0 &&
+        <>
+        <h2 className="section-title">Pending</h2>
+        {pending.map((p) => (
+            <div key={p.id} className="list-row">
+                <div>
+                    <div className="list-row-name">{p.username}</div>
+                    <div className="list-row-meta">
+                        {p.direction === 'received' ? 'Wants to be friends' : 'Request sent'}
+                    </div>
+                </div>
+                <div className="list-row-actions">
+                    {p.direction === 'received' ?
+                    (
+                        <>
+                        <button type="button" className="action-button" onClick={() => handleAccept(p.id)}>Accept</button>
+                        <button type="button" className="remove-button" onClick={() => handleDeny(p.id)}>Deny</button>
+                        </>
+                    ) :
+                    (
+                        <button type="button" className="remove-button" onClick={() => handleRemove(p.id)}>Cancel</button>
+                    )}
+                </div>
+            </div>
+        ))}
+        </>
+        }
 
-        {friends.length === 0 && pending.length === 0 &&
-            <div className="empty-message">No friends or pending requests yet</div>
-        }
+        {friends.length === 0 && pending.length === 0 &&
+            <div className="empty-message">No friends or pending requests yet</div>
+        }
 
-        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-        <p>{message}</p>
-        </div>
-        </div>
-    );
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        <p>{message}</p>
+        </div>
+        </div>
+    );
 }
 
 export default Friends;
