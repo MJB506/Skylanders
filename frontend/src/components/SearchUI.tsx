@@ -769,10 +769,10 @@ function SearchUI()
                                                     </button>
                                                 </div>
                                             )}
-                                            <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', width: '64px', backgroundColor: userWishlist.includes(fig._id) ? '#555' : '#7dd8f8', color: userWishlist.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
-                                                {userWishlist.includes(fig._id) ? '✓ Wish' : '+ Wish'}
-                                            </button>
                                         </div>
+                                        <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', width: '64px', backgroundColor: userWishlist.includes(fig._id) ? '#555' : '#7dd8f8', color: userWishlist.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                                            {userWishlist.includes(fig._id) ? '✓ Wish' : '+ Wish'}
+                                        </button>
                                     </div>
                                 </div>
                             ))}
