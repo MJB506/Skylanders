@@ -534,8 +534,18 @@ function SearchUI()
         if (sortAlpha === 'desc') return b.Name.localeCompare(a.Name);
         if (sortGame === 'asc') return a.Game - b.Game;
         if (sortGame === 'desc') return b.Game - a.Game;
-        if (sortElement === 'asc') return ELEMENTS.indexOf(a.Element) - ELEMENTS.indexOf(b.Element);
-        if (sortElement === 'desc') return ELEMENTS.indexOf(b.Element) - ELEMENTS.indexOf(a.Element);
+        if (sortElement === 'asc')
+        {
+            const aIdx = ELEMENTS.indexOf(a.Element);
+            const bIdx = ELEMENTS.indexOf(b.Element);
+            return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+        }
+        if (sortElement === 'desc')
+        {
+            const aIdx = ELEMENTS.indexOf(a.Element);
+            const bIdx = ELEMENTS.indexOf(b.Element);
+            return (bIdx === -1 ? -1 : bIdx) - (aIdx === -1 ? -1 : aIdx);
+        }
         return 0;
     });
 
@@ -702,8 +712,8 @@ function SearchUI()
                                     <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px', position: 'relative' }}>
                                         <div style={{ position: 'relative' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
                                             <button
-                                                onClick={() => setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
-                                                style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                                onClick={() => !userCollection.includes(fig._id) && setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
+                                                style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: userCollection.includes(fig._id) ? 'default' : 'pointer', fontSize: '12px' }}
                                             >
                                                 {userCollection.includes(fig._id) ? '✓ Col' : '+ Col'}
                                             </button>
