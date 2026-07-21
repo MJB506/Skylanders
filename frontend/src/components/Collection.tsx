@@ -10,12 +10,12 @@ import "./ProfileStyles.css";
 const PAGE_SIZE = 6;
 
 const GAMES = [
-    "Skylanders: Spyro's Adventure",
-    "Skylanders: Giants",
-    "Skylanders: SWAP-Force",
-    "Skylanders: Trap Team",
-    "Skylanders: SuperChargers",
-    "Skylanders: Imaginators"
+    "Spyro's Adventure",
+    "Giants",
+    "SWAP-Force",
+    "Trap Team",
+    "SuperChargers",
+    "Imaginators"
 ];
 
 function gameName(gameNumber: number) : string
