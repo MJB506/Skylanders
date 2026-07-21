@@ -225,6 +225,23 @@ function SearchUI()
     const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
     const userId = userData.id || '';
 
+    // boxed/unboxed dropdown for add to collection
+    const [boxedDropdownId, setBoxedDropdownId] = useState<string | null>(null);
+    const boxedDropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() =>
+    {
+        function handleClickOutside(e: MouseEvent)
+        {
+            if (boxedDropdownRef.current && !boxedDropdownRef.current.contains(e.target as Node))
+            {
+                setBoxedDropdownId(null);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     // fetch user's collection on mount for "collected" filter
     useEffect(() =>
     {
@@ -374,12 +391,13 @@ function SearchUI()
         else doSearchUsers();
     }
 
-    async function doAddToCollection(figureId: string): Promise<void>
+    async function doAddToCollection(figureId: string, boxed: boolean): Promise<void>
     {
+        setBoxedDropdownId(null);
         try
         {
             const jwtToken = retrieveToken();
-            const obj = { userId, figureId, boxed: false, quantity: 1, jwtToken };
+            const obj = { userId, figureId, boxed, quantity: 1, jwtToken };
             const response = await fetch(buildPath('api/addtocollection'),
             {
                 method: 'POST',
@@ -391,7 +409,7 @@ function SearchUI()
             if (res.error && res.error !== '') setMessage(res.error);
             else
             {
-                setMessage('Added to collection!');
+                setMessage(`Added to collection (${boxed ? 'Boxed' : 'Unboxed'})!`);
                 setUserCollection(prev => [...prev, figureId]);
             }
         }
@@ -681,10 +699,35 @@ function SearchUI()
                                     }
                                     <p style={{ marginTop: '8px', fontSize: '13px', color: '#fff' }}>{fig.Name}</p>
                                     <p style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{GAME_MAP[fig.Game] || ''}</p>
-                                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px' }}>
-                                        <button onClick={() => doAddToCollection(fig._id)} style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
-                                            {userCollection.includes(fig._id) ? '✓ Col' : '+ Col'}
-                                        </button>
+                                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px', position: 'relative' }}>
+                                        <div style={{ position: 'relative' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
+                                            <button
+                                                onClick={() => setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
+                                                style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                            >
+                                                {userCollection.includes(fig._id) ? '✓ Col' : '+ Col'}
+                                            </button>
+                                            {boxedDropdownId === fig._id && (
+                                                <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', backgroundColor: '#1e3a5f', borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.4)', zIndex: 200, marginBottom: '4px', minWidth: '110px' }}>
+                                                    <button
+                                                        onClick={() => doAddToCollection(fig._id, true)}
+                                                        style={{ display: 'block', width: '100%', padding: '8px 12px', backgroundColor: 'transparent', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '12px', textAlign: 'left', borderRadius: '6px 6px 0 0' }}
+                                                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a4a7f')}
+                                                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                                                    >
+                                                        📦 Boxed
+                                                    </button>
+                                                    <button
+                                                        onClick={() => doAddToCollection(fig._id, false)}
+                                                        style={{ display: 'block', width: '100%', padding: '8px 12px', backgroundColor: 'transparent', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '12px', textAlign: 'left', borderRadius: '0 0 6px 6px' }}
+                                                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a4a7f')}
+                                                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                                                    >
+                                                        🔓 Unboxed
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                         <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Wish</button>
                                     </div>
                                 </div>
