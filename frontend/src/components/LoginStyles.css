@@ -223,4 +223,17 @@ body{
     font-weight: 400;
 }
 
+.input-requirements
+{
+    color: #91dbf3;
+    font-size: 0.9rem;
+    text-align: left;
+    margin-top: 4px;
+    margin-bottom: 14px;
+    width: 100%;
+    max-width: 350px;
+    align-self: center;
+    line-height: 1.4;
+}
+
 
