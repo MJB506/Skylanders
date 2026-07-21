@@ -134,13 +134,16 @@ function EmailConfirmation()
                 </button>
     
             </form>
-    
-            <button
-                className="secondary-button"
-                onClick={resendCode}
-            >
-                Send New Code
-            </button>
+                
+            <p className="login-links">
+        
+                Didn't Recieve An Email?
+        
+                <span onClick={() => onClick={resendCode}>
+                    Resend
+                </span>
+        
+            </p>
     
             <div className="error-message">
                 {message}
