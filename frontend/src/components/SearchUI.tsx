@@ -121,7 +121,7 @@ function MultiCheckbox({ label, options, selected, onChange }: {
     return (
         <div style={{ ...dropdownStyle }}>
             <button style={dropdownButtonStyle} onClick={() => setOpen(!open)}>
-                {displayLabel} ▾
+                {displayLabel}
             </button>
             {open && (
                 <div style={dropdownMenuStyle}>
@@ -171,7 +171,6 @@ function SearchUI()
 
     const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
     const userId = userData.id || '';
-
 
     async function doSearchFigures(): Promise<void>
     {
@@ -269,7 +268,6 @@ function SearchUI()
     }
 
     async function doAddToCollection(figureId: string): Promise<void>
-    
     {
         try
         {
@@ -292,7 +290,7 @@ function SearchUI()
         catch (error: any) { setMessage(error.toString()); }
     }
 
- 
+
     async function doAddToWishlist(figureId: string): Promise<void>
     {
         try
@@ -408,7 +406,6 @@ function SearchUI()
         if (filterGames.length > 0 && !filterGames.includes(fig.Game)) return false;
         if (filterElements.length > 0 && !filterElements.includes(fig.Element)) return false;
         if (filterTypes.length > 0 && !filterTypes.includes(fig.Type)) return false;
-    
         return true;
     });
 
@@ -478,7 +475,9 @@ function SearchUI()
                 {/* mode toggle */}
                 <div style={{ marginBottom: '20px', display: 'flex', gap: '12px' }}>
                     <button
-                         style={{ padding: '8px 20px', backgroundColor: searchMode === 'figures' ? '#7dd8f8' : '#1e3a5f', color: searchMode === 'figures' ? '#0d1b2a' : '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                        onClick={() => { setSearchMode('figures'); setMessage(''); setUserResults([]); }}
+                        style={{ padding: '8px 20px', backgroundColor: searchMode === 'figures' ? '#7dd8f8' : '#1e3a5f', color: searchMode === 'figures' ? '#0d1b2a' : '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
                         Figures
                     </button>
                     <button
@@ -502,11 +501,11 @@ function SearchUI()
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
-                        style={{ flex: 1, padding: '8px 12px', borderRadius: '4px', border: '1px solid #2a2860', backgroundColor: '#efefef', color: '#000', fontSize: '14px' }}
+                        style={{ flex: 1, padding: '8px 12px', borderRadius: '4px', border: '1px solid #1e3a5f', backgroundColor: '#fff', color: '#000', fontSize: '14px' }}
                     />
                     <button
                         onClick={handleSearch}
-                        style={{ padding: '8px 20px', backgroundColor: '#14122e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        style={{ padding: '8px 20px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                     >
                         Search
                     </button>
@@ -520,7 +519,6 @@ function SearchUI()
                             <MultiCheckbox label="Game" options={GAMES} selected={filterGames} onChange={(v) => { setFilterGames(v); setFigurePage(1); }} />
                             <MultiCheckbox label="Element" options={ELEMENTS} selected={filterElements} onChange={(v) => { setFilterElements(v); setFigurePage(1); }} />
                             <MultiCheckbox label="Type" options={TYPES} selected={filterTypes} onChange={(v) => { setFilterTypes(v); setFigurePage(1); }} />
-                            <MultiCheckbox label="Collected" options={['Collected', 'Not Collected']} selected={filterCollected} onChange={(v) => { setFilterCollected(v); setFigurePage(1); }} />
                             <button onClick={clearFilters} style={{ padding: '8px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', marginLeft: 'auto' }}>
                                 Clear Filters
                             </button>
@@ -528,17 +526,17 @@ function SearchUI()
 
                         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
                             <span style={{ color: '#aaa', fontSize: '14px' }}>Sort By:</span>
-                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#efefef', color: '#000', border: 'none', minWidth: '220px', fontSize: '14px' }}>
+                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
                                 <option value="">Alphabetically</option>
                                 <option value="asc">A → Z</option>
                                 <option value="desc">Z → A</option>
                             </select>
-                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#efefef', color: '#000', border: 'none', minWidth: '220px', fontSize: '14px' }}>
+                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
                                 <option value="">Game</option>
                                 <option value="asc">1st → 6th</option>
                                 <option value="desc">6th → 1st</option>
                             </select>
-                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#efefef', color: '#000', border: 'none', minWidth: '220px', fontSize: '14px' }}>
+                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
                                 <option value="">Element</option>
                                 <option value="asc">Air → Water</option>
                                 <option value="desc">Water → Air</option>
@@ -555,27 +553,15 @@ function SearchUI()
                     <>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
                             {paginatedFigures.map(fig => (
-                                <div key={fig._id} style={{ backgroundColor: '#14122e', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+                                <div key={fig._id} style={{ backgroundColor: '#1e3a5f', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
                                     {fig.Image
                                         ? <img src={fig.Image} alt={fig.Name} style={{ width: '100%', height: '140px', objectFit: 'contain' }} />
                                         : <div style={{ width: '100%', height: '140px', backgroundColor: '#ccc', borderRadius: '4px' }} />
                                     }
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '8px' }}>
-                                        <p style={{ fontSize: '13px', color: '#fff', margin: 0 }}>{fig.Name}</p>
-                                        <button onClick={() => doAddToCollection(fig._id)} title="Add to Collection"
-                                        style={{ width: '22px', height: '22px', padding: 0, backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', lineHeight: '22px' }}>+</button>
-                                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                                            <button onClick={() => setOpenCardMenu(openCardMenu === fig._id ? null : fig._id)} title="More options"
-                                            style={{ width: '22px', height: '22px', padding: 0, backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', lineHeight: '22px' }}>^</button>
-                                            {openCardMenu === fig._id && (
-                                                <div style={{ position: 'absolute', top: '100%', right: 0, zIndex: 50, backgroundColor: '#efefef', borderRadius: '4px', padding: '4px 0', minWidth: '150px', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}>
-                                                    <button onClick={() => { doAddToCollectionBoxed(fig._id); setOpenCardMenu(null); }}
-                                                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: '6px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#000' }}>Add (Boxed)</button>
-                                                    <button onClick={() => { doAddToWishlist(fig._id); setOpenCardMenu(null); }}
-                                                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: '6px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#000' }}>Add to Wishlist</button>
-                                                </div>
-                                            )}
-                                        </div>
+                                    <p style={{ marginTop: '8px', fontSize: '13px', color: '#fff' }}>{fig.Name}</p>
+                                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px' }}>
+                                        <button onClick={() => doAddToCollection(fig._id)} style={{ padding: '4px 10px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Col</button>
+                                        <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Wish</button>
                                     </div>
                                 </div>
                             ))}
@@ -588,7 +574,7 @@ function SearchUI()
                 {searchMode === 'users' && paginatedUsers.length > 0 && (
                     <>
                         {paginatedUsers.map(user => (
-                            <div key={user.id} style={{ backgroundColor: '#14122e', borderRadius: '8px', padding: '16px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #2a2860' }}>
+                            <div key={user.id} style={{ backgroundColor: '#1e3a5f', borderRadius: '8px', padding: '16px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #2a4a6f' }}>
                                 <div>
                                     <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#7dd8f8' }}>{user.username}</p>
                                     {(user.firstName || user.lastName) && (
@@ -608,7 +594,7 @@ function SearchUI()
             {/* delete confirmation popup */}
             {showDeletePopup && deleteTarget && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div style={{ background: '#14122e', padding: '28px', borderRadius: '10px', maxWidth: '360px', width: '90%', color: '#fff' }}>
+                    <div style={{ background: '#1e3a5f', padding: '28px', borderRadius: '10px', maxWidth: '360px', width: '90%', color: '#fff' }}>
                         <h3 style={{ marginBottom: '12px' }}>Are you sure?</h3>
                         <p>Remove <strong>{deleteTarget.label}</strong> from your {deleteTarget.type}?</p>
                         <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
