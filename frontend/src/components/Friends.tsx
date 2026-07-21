@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { buildPath } from './Path';
 import { retrieveToken, storeToken } from '../tokenStorage';
 import ProfileHeader from './ProfileHeader';
@@ -10,10 +11,8 @@ const PAGE_SIZE = 6;
 
 function Friends()
 {
+    const navigate = useNavigate();
     const [message, setMessage] = useState('');
-    const [search, setSearchValue] = useState('');
-    const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [showAddPanel, setShowAddPanel] = useState(false);
     const [friends, setFriends] = useState<any[]>([]);
     const [pending, setPending] = useState<any[]>([]);
     const [page, setPage] = useState(1);
@@ -43,47 +42,6 @@ function Friends()
 
             if (res.error) setMessage(res.error);
             else { setFriends(res.friends ?? []); setPending(res.pending ?? []); }
-        }
-        catch (error: any) { setMessage(error.toString()); }
-    }
-
-    async function doSearch(e: any) : Promise<void>
-    {
-        e.preventDefault();
-        try
-        {
-            const obj = { userId: getUserId(), search, jwtToken: retrieveToken() };
-            const response = await fetch(buildPath('api/searchusers'),
-            {
-                method: 'POST',
-                body: JSON.stringify(obj),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const res = await response.json();
-            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
-
-            if (res.error) setMessage(res.error);
-            else setSearchResults(res.results ?? []);
-        }
-        catch (error: any) { setMessage(error.toString()); }
-    }
-
-    async function handleSendRequest(friendId: string) : Promise<void>
-    {
-        try
-        {
-            const obj = { userId: getUserId(), friendId, jwtToken: retrieveToken() };
-            const response = await fetch(buildPath('api/sendfriendrequest'),
-            {
-                method: 'POST',
-                body: JSON.stringify(obj),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const res = await response.json();
-            if (res.jwtToken) storeToken({ accessToken: res.jwtToken });
-
-            if (res.error) setMessage(res.error);
-            else { setMessage('Friend request sent'); loadFriends(); }
         }
         catch (error: any) { setMessage(error.toString()); }
     }
@@ -156,27 +114,10 @@ function Friends()
         <ProfileHeader />
         <div className="profile-page">
         <ProfileTabs actions={
-            <button type="button" className="action-button" onClick={() => setShowAddPanel(!showAddPanel)}>
+            <button type="button" className="action-button" onClick={() => navigate('/search?mode=users')}>
                 Add Friend +
             </button>
         } />
-
-        {showAddPanel &&
-        <div className="add-panel">
-            <input type="text" placeholder="Search username..."
-            value={search} onChange={(e) => setSearchValue(e.target.value)} />
-            <button type="button" className="action-button action-button-small" onClick={doSearch}>Search</button>
-            <div>
-                {searchResults.map((u) => (
-                    <div key={u.id} className="add-result-row">
-                        <span>{u.username} ({u.firstName} {u.lastName})</span>
-                        <button type="button" className="action-button action-button-small"
-                        onClick={() => handleSendRequest(u.id)}>Add Friend</button>
-                    </div>
-                ))}
-            </div>
-        </div>
-        }
 
         {friends.length > 0 &&
         <>
