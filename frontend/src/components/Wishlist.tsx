@@ -107,4 +107,3 @@ function Wishlist()
 }
 
 export default Wishlist;
-Sent from my iPhone
