@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
@@ -48,12 +48,12 @@ const ITEMS_PER_PAGE = 16;
 // dropdown checkbox style
 const dropdownStyle: React.CSSProperties =
 {
-    backgroundColor: '#efefef',
+    backgroundColor: '#1e3a5f',
     borderRadius: '4px',
     border: 'none',
-    color: '#000',
+    color: '#fff',
     padding: '0',
-    minWidth: '220px',
+    minWidth: '180px',
     position: 'relative',
     display: 'inline-block'
 };
@@ -62,8 +62,8 @@ const dropdownButtonStyle: React.CSSProperties =
 {
     width: '100%',
     padding: '8px 12px',
-    backgroundColor: '#efefef',
-    color: '#000',
+    backgroundColor: '#1e3a5f',
+    color: '#fff',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
@@ -77,9 +77,9 @@ const dropdownMenuStyle: React.CSSProperties =
     top: '100%',
     left: 0,
     zIndex: 100,
-    backgroundColor: '#efefef',
+    backgroundColor: '#1e3a5f',
     borderRadius: '4px',
-    minWidth: '220px',
+    minWidth: '180px',
     padding: '8px 0',
     boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
 };
@@ -92,7 +92,7 @@ const checkboxLabelStyle: React.CSSProperties =
     padding: '6px 12px',
     cursor: 'pointer',
     fontSize: '14px',
-    color: '#000'
+    color: '#fff'
 };
 
 function MultiCheckbox({ label, options, selected, onChange }: {
@@ -121,7 +121,7 @@ function MultiCheckbox({ label, options, selected, onChange }: {
     return (
         <div style={{ ...dropdownStyle }}>
             <button style={dropdownButtonStyle} onClick={() => setOpen(!open)}>
-                {displayLabel} ^
+                {displayLabel} ▾
             </button>
             {open && (
                 <div style={dropdownMenuStyle}>
@@ -155,9 +155,6 @@ function SearchUI()
     const [filterGames, setFilterGames] = useState<string[]>([]);
     const [filterElements, setFilterElements] = useState<string[]>([]);
     const [filterTypes, setFilterTypes] = useState<string[]>([]);
-    const [filterCollected, setFilterCollected] = useState<string[]>([]);
-    const [ownedFigureIds, setOwnedFigureIds] = useState<Set<string>>(new Set());
-    const [openCardMenu, setOpenCardMenu] = useState<string | null>(null);
 
     // sorting
     const [sortAlpha, setSortAlpha] = useState('');
@@ -175,34 +172,6 @@ function SearchUI()
     const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
     const userId = userData.id || '';
 
-    // Needed for the "Collected" filter -- cross-references search results
-    // against what's already in the user's collection.
-    useEffect(() =>
-    {
-        async function loadOwnedFigures()
-        {
-            try
-            {
-                const jwtToken = retrieveToken();
-                const response = await fetch(buildPath('api/getcollection'),
-                {
-                    method: 'POST',
-                    body: JSON.stringify({ userId, jwtToken }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const res = JSON.parse(await response.text());
-                if (!res.error && res.results)
-                {
-                    setOwnedFigureIds(new Set(res.results.map((f: any) => f._id)));
-                }
-            }
-            catch
-            {
-                // non-fatal -- Collected filter just won't have data yet
-            }
-        }
-        loadOwnedFigures();
-    }, []);
 
     async function doSearchFigures(): Promise<void>
     {
@@ -299,12 +268,13 @@ function SearchUI()
         else doSearchUsers();
     }
 
-    async function doAddToCollection(figureId: string, boxed: boolean = false): Promise<void>
+    async function doAddToCollection(figureId: string): Promise<void>
+    
     {
         try
         {
             const jwtToken = retrieveToken();
-            const obj = { userId, figureId, boxed, quantity: 1, jwtToken };
+            const obj = { userId, figureId, boxed: false, quantity: 1, jwtToken };
             const response = await fetch(buildPath('api/addtocollection'),
             {
                 method: 'POST',
@@ -322,11 +292,7 @@ function SearchUI()
         catch (error: any) { setMessage(error.toString()); }
     }
 
-    async function doAddToCollectionBoxed(figureId: string): Promise<void>
-    {
-        return doAddToCollection(figureId, true);
-    }
-
+ 
     async function doAddToWishlist(figureId: string): Promise<void>
     {
         try
@@ -431,7 +397,6 @@ function SearchUI()
         setFilterGames([]);
         setFilterElements([]);
         setFilterTypes([]);
-        setFilterCollected([]);
         setSortAlpha('');
         setSortGame('');
         setSortElement('');
@@ -443,14 +408,7 @@ function SearchUI()
         if (filterGames.length > 0 && !filterGames.includes(fig.Game)) return false;
         if (filterElements.length > 0 && !filterElements.includes(fig.Element)) return false;
         if (filterTypes.length > 0 && !filterTypes.includes(fig.Type)) return false;
-        if (filterCollected.length > 0)
-        {
-            const owned = ownedFigureIds.has(fig._id);
-            const wantCollected = filterCollected.includes('Collected');
-            const wantNotCollected = filterCollected.includes('Not Collected');
-            if (owned && !wantCollected) return false;
-            if (!owned && !wantNotCollected) return false;
-        }
+    
         return true;
     });
 
@@ -507,7 +465,7 @@ function SearchUI()
 
             <ProfileHeader />
             {/* nav */}
-            {/* <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #14122e', textAlign: 'center' }}>
+            {/* <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
                 <a href="/profile" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
                 <span style={{ color: '#555', marginRight: '16px' }}>|</span>
                 <a href="/search" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
@@ -515,19 +473,17 @@ function SearchUI()
                 <a href="/search" onClick={(e) => { e.preventDefault(); setSearchMode('users'); window.history.pushState({}, '', '/search'); }} style={{ color: '#fff', textDecoration: 'none' }}>Users</a>
             </nav> */}
 
-            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 64px' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 48px' }}>
 
                 {/* mode toggle */}
                 <div style={{ marginBottom: '20px', display: 'flex', gap: '12px' }}>
                     <button
-                        onClick={() => { setSearchMode('figures'); setMessage(''); setUserResults([]); }}
-                        style={{ padding: '8px 20px', backgroundColor: searchMode === 'figures' ? '#7dd8f8' : '#14122e', color: searchMode === 'figures' ? '#0d1b2a' : '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
+                         style={{ padding: '8px 20px', backgroundColor: searchMode === 'figures' ? '#7dd8f8' : '#1e3a5f', color: searchMode === 'figures' ? '#0d1b2a' : '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
                         Figures
                     </button>
                     <button
                         onClick={() => { setSearchMode('users'); setMessage(''); setFigureResults([]); }}
-                        style={{ padding: '8px 20px', backgroundColor: searchMode === 'users' ? '#7dd8f8' : '#14122e', color: searchMode === 'users' ? '#0d1b2a' : '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                        style={{ padding: '8px 20px', backgroundColor: searchMode === 'users' ? '#7dd8f8' : '#1e3a5f', color: searchMode === 'users' ? '#0d1b2a' : '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
                     >
                         Users
                     </button>
