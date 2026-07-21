@@ -9,12 +9,28 @@ import "./ProfileStyles.css";
 
 const PAGE_SIZE = 6;
 
+const GAMES = [
+    "Skylanders: Spyro's Adventure",
+    "Skylanders: Giants",
+    "Skylanders: SWAP-Force",
+    "Skylanders: Trap Team",
+    "Skylanders: SuperChargers",
+    "Skylanders: Imaginators"
+];
+
+function gameName(gameNumber: number) : string
+{
+    return GAMES[gameNumber - 1] ?? String(gameNumber);
+}
+
 function Collection()
 {
    const navigate = useNavigate();
    const [message, setMessage] = useState('');
    const [collection, setCollection] = useState<any[]>([]);
    const [page, setPage] = useState(1);
+   const [qtyInputs, setQtyInputs] = useState<Record<string, number>>({});
+   const [editingKey, setEditingKey] = useState<string | null>(null);
 
    function getUserId() : string
    {
@@ -45,11 +61,11 @@ function Collection()
        catch (error: any) { setMessage(error.toString()); }
    }
 
-   async function handleAdd(figureId: string, boxed: boolean) : Promise<void>
+   async function handleAdd(figureId: string, boxed: boolean, quantity: number = 1) : Promise<void>
    {
        try
        {
-           const obj = { userId: getUserId(), figureId, boxed, quantity: 1, jwtToken: retrieveToken() };
+           const obj = { userId: getUserId(), figureId, boxed, quantity, jwtToken: retrieveToken() };
            const response = await fetch(buildPath('api/addtocollection'),
            {
                method: 'POST',
@@ -61,6 +77,44 @@ function Collection()
 
            if (res.error) setMessage(res.error);
            else { setMessage('Added to collection'); loadCollection(); }
+       }
+       catch (error: any) { setMessage(error.toString()); }
+   }
+
+   // The API only supports adding (incrementing) or removing the whole entry --
+   // there's no "set to an exact quantity" endpoint. To let the user type any
+   // number, we work out the difference: increasing calls addtocollection with
+   // the delta; decreasing removes the entry and re-adds it at the new amount.
+   async function handleSetQuantity(fig: any, newQuantity: number) : Promise<void>
+   {
+       const delta = newQuantity - fig.Quantity;
+       if (delta === 0) return;
+
+       if (delta > 0)
+       {
+           await handleAdd(fig._id, fig.Boxed, delta);
+           return;
+       }
+
+       try
+       {
+           const removeObj = { userId: getUserId(), figureId: fig._id, boxed: fig.Boxed, jwtToken: retrieveToken() };
+           await fetch(buildPath('api/removefromcollection'),
+           {
+               method: 'POST',
+               body: JSON.stringify(removeObj),
+               headers: { 'Content-Type': 'application/json' }
+           });
+
+           if (newQuantity > 0)
+           {
+               await handleAdd(fig._id, fig.Boxed, newQuantity);
+           }
+           else
+           {
+               setMessage('Removed from collection');
+               loadCollection();
+           }
        }
        catch (error: any) { setMessage(error.toString()); }
    }
@@ -106,18 +160,34 @@ function Collection()
                    <div className="figure-info">
                        <h3 className="figure-name">{fig.Name}</h3>
                        <div className="figure-detail">
-                           Game: {fig.Game}<br />
+                           Game: {gameName(fig.Game)}<br />
                            Element: {fig.Element}<br />
                            Type: {fig.Type}<br />
                            Variant: {fig.Variant ? 'Yes' : 'No'}
                        </div>
                    </div>
                    <div className="figure-side">
+                       <button type="button" className="action-button"
+                       onClick={() => {
+                           const key = `${fig._id}-${fig.Boxed}`;
+                           setQtyInputs({ ...qtyInputs, [key]: fig.Quantity });
+                           setEditingKey(editingKey === key ? null : key);
+                       }}>Edit Quantity</button>
+
+                       {editingKey === `${fig._id}-${fig.Boxed}` &&
+                       <div className="figure-qty-adder">
+                           <input type="number" min="0"
+                           value={qtyInputs[`${fig._id}-${fig.Boxed}`] ?? fig.Quantity}
+                           onChange={(e) => setQtyInputs({ ...qtyInputs, [`${fig._id}-${fig.Boxed}`]: Math.max(0, parseInt(e.target.value) || 0) })} />
+                           <button type="button" className="action-button"
+                           onClick={() => { handleSetQuantity(fig, qtyInputs[`${fig._id}-${fig.Boxed}`] ?? fig.Quantity); setEditingKey(null); }}>Save</button>
+                       </div>
+                       }
+
                        <div className="figure-meta">
                            Quantity: {fig.Quantity}<br />
                            Boxed: {fig.Boxed ? 'Yes' : 'No'}
                        </div>
-                       <div><button type="button" className="action-button" onClick={() => handleAdd(fig._id, fig.Boxed)}>+1</button></div>
                        <button type="button" className="remove-button" onClick={() => handleRemove(fig._id, fig.Boxed)}>Remove</button>
                    </div>
                </div>
