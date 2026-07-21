@@ -122,6 +122,10 @@ function Signup()
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
+
+                <p className="input-requirements">
+                    A-Z, 0-9, and "_" only
+                </p>
     
                 <input
                     type="email"
@@ -137,7 +141,7 @@ function Signup()
                     onChange={(e) => setPassword(e.target.value)}
                 />
 
-                <p className="password-requirements">
+                <p className="input-requirements">
                     Password must contain:
                     <br />
                     • At least 10 characters
@@ -153,6 +157,10 @@ function Signup()
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+
+                <p className="input-requirements">
+                    Passwords Must Match
+                </p>
     
                 <button
                     className="login-button"
