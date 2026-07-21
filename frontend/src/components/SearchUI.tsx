@@ -202,6 +202,7 @@ function SearchUI()
     const [userResults, setUserResults] = useState<User[]>([]);
     const [message, setMessage] = useState('');
     const [userCollection, setUserCollection] = useState<{id: string, boxed: boolean}[]>([]);
+    const [userWishlist, setUserWishlist] = useState<string[]>([]);
 
     // multi-select filters - games stored as strings of numbers "1","2" etc
     const [filterGames, setFilterGames] = useState<string[]>([]);
@@ -262,7 +263,24 @@ function SearchUI()
             }
             catch { /* silent fail */ }
         }
-        if (userId) fetchCollection();
+        async function fetchWishlist()
+        {
+            try
+            {
+                const jwtToken = retrieveToken();
+                const response = await fetch(buildPath('api/getwishlist'),
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ userId, jwtToken }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const res = JSON.parse(await response.text());
+                const ids = (res.results || []).map((f: any) => f._id);
+                setUserWishlist(ids);
+            }
+            catch { /* silent fail */ }
+        }
+        if (userId) { fetchCollection(); fetchWishlist(); }
     }, [userId]);
 
     async function doSearchFigures(): Promise<void>
@@ -423,6 +441,11 @@ function SearchUI()
 
     async function doAddToWishlist(figureId: string): Promise<void>
     {
+        if (userWishlist.includes(figureId))
+        {
+            setMessage('This figure is already in your wishlist!');
+            return;
+        }
         try
         {
             const jwtToken = retrieveToken();
@@ -436,7 +459,11 @@ function SearchUI()
             const res = JSON.parse(await response.text());
             if (res.jwtToken && res.jwtToken !== '') localStorage.setItem('jwtToken', res.jwtToken);
             if (res.error && res.error !== '') setMessage(res.error);
-            else setMessage('Added to wishlist!');
+            else
+            {
+                setMessage('Added to wishlist!');
+                setUserWishlist(prev => [...prev, figureId]);
+            }
         }
         catch (error: any) { setMessage(error.toString()); }
     }
@@ -743,7 +770,9 @@ function SearchUI()
                                                 </div>
                                             )}
                                         </div>
-                                        <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Wish</button>
+                                        <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', backgroundColor: userWishlist.includes(fig._id) ? '#555' : '#7dd8f8', color: userWishlist.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                                            {userWishlist.includes(fig._id) ? '✓ Wish' : '+ Wish'}
+                                        </button>
                                     </div>
                                 </div>
                             ))}
