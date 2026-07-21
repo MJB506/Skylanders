@@ -9,6 +9,20 @@ import "./ProfileStyles.css";
 
 const PAGE_SIZE = 6;
 
+const GAMES = [
+    "Spyro's Adventure",
+    "Giants",
+    "SWAP-Force",
+    "Trap Team",
+    "SuperChargers",
+    "Imaginators"
+];
+
+function gameName(gameNumber: number) : string
+{
+    return GAMES[gameNumber - 1] ?? String(gameNumber);
+}
+
 function Wishlist()
 {
     const navigate = useNavigate();
@@ -86,7 +100,7 @@ function Wishlist()
                     <div className="figure-info">
                         <h3 className="figure-name">{fig.Name}</h3>
                         <div className="figure-detail">
-                            Game: {fig.Game}<br />
+                            Game: {gameName(fig.Game)}<br />
                             Element: {fig.Element}<br />
                             Type: {fig.Type}<br />
                             Variant: {fig.Variant ? 'Yes' : 'No'}
