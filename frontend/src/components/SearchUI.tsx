@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
@@ -11,7 +11,7 @@ interface Figure
     Element: string;
     Variant: boolean;
     Type: string;
-    Game: string;
+    Game: number;
     Image: string;
 }
 
@@ -25,14 +25,18 @@ interface User
     wishlistCount?: number;
 }
 
-const GAMES = [
-    "Skylanders: Spyro's Adventure",
-    "Skylanders: Giants",
-    "Skylanders: SWAP-Force",
-    "Skylanders: Trap Team",
-    "Skylanders: SuperChargers",
-    "Skylanders: Imaginators"
-];
+// Game is stored as a number 1-6 in the database
+const GAME_MAP: { [key: number]: string } =
+{
+    1: "Spyro's Adventure",
+    2: "Giants",
+    3: "SWAP-Force",
+    4: "Trap Team",
+    5: "SuperChargers",
+    6: "Imaginators"
+};
+
+const GAME_OPTIONS = [1, 2, 3, 4, 5, 6];
 
 const ELEMENTS = [
     "Air", "Dark", "Earth", "Fire", "Life",
@@ -61,7 +65,7 @@ const actionButtonStyle: React.CSSProperties =
     whiteSpace: 'nowrap'
 };
 
-// shared dropdown style
+// shared select style - no native arrow
 const selectStyle: React.CSSProperties =
 {
     padding: '10px 10px',
@@ -69,9 +73,11 @@ const selectStyle: React.CSSProperties =
     backgroundColor: '#1e3a5f',
     color: '#fff',
     border: 'none',
-    width: '140px',
+    width: '150px',
     fontSize: '14px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    appearance: 'none',
+    WebkitAppearance: 'none'
 };
 
 // dropdown checkbox styles
@@ -82,7 +88,7 @@ const dropdownStyle: React.CSSProperties =
     border: 'none',
     color: '#fff',
     padding: '0',
-    width: '140px',
+    width: '150px',
     position: 'relative',
     display: 'inline-block'
 };
@@ -108,7 +114,7 @@ const dropdownMenuStyle: React.CSSProperties =
     zIndex: 100,
     backgroundColor: '#1e3a5f',
     borderRadius: '4px',
-    minWidth: '140px',
+    minWidth: '150px',
     padding: '8px 0',
     boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
 };
@@ -124,14 +130,30 @@ const checkboxLabelStyle: React.CSSProperties =
     color: '#fff'
 };
 
-function MultiCheckbox({ label, options, selected, onChange }: {
+function MultiCheckbox({ label, options, optionLabels, selected, onChange }: {
     label: string;
     options: string[];
+    optionLabels?: string[];
     selected: string[];
     onChange: (val: string[]) => void;
 })
 {
     const [open, setOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    // close when clicking outside
+    useEffect(() =>
+    {
+        function handleClickOutside(e: MouseEvent)
+        {
+            if (ref.current && !ref.current.contains(e.target as Node))
+            {
+                setOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     function toggle(option: string)
     {
@@ -148,20 +170,20 @@ function MultiCheckbox({ label, options, selected, onChange }: {
     const displayLabel = selected.length > 0 ? `${label} (${selected.length}) ▾` : `${label} ▾`;
 
     return (
-        <div style={{ ...dropdownStyle }}>
+        <div style={{ ...dropdownStyle }} ref={ref}>
             <button style={dropdownButtonStyle} onClick={() => setOpen(!open)}>
                 {displayLabel}
             </button>
             {open && (
                 <div style={dropdownMenuStyle}>
-                    {options.map(opt => (
+                    {options.map((opt, i) => (
                         <label key={opt} style={checkboxLabelStyle}>
                             <input
                                 type="checkbox"
                                 checked={selected.includes(opt)}
                                 onChange={() => toggle(opt)}
                             />
-                            {opt}
+                            {optionLabels ? optionLabels[i] : opt}
                         </label>
                     ))}
                 </div>
@@ -179,11 +201,13 @@ function SearchUI()
     const [figureResults, setFigureResults] = useState<Figure[]>([]);
     const [userResults, setUserResults] = useState<User[]>([]);
     const [message, setMessage] = useState('');
+    const [userCollection, setUserCollection] = useState<string[]>([]);
 
-    // multi-select filters
+    // multi-select filters - games stored as strings of numbers "1","2" etc
     const [filterGames, setFilterGames] = useState<string[]>([]);
     const [filterElements, setFilterElements] = useState<string[]>([]);
     const [filterTypes, setFilterTypes] = useState<string[]>([]);
+    const [filterCollected, setFilterCollected] = useState(false);
 
     // sorting
     const [sortAlpha, setSortAlpha] = useState('');
@@ -200,6 +224,29 @@ function SearchUI()
 
     const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
     const userId = userData.id || '';
+
+    // fetch user's collection on mount for "collected" filter
+    useEffect(() =>
+    {
+        async function fetchCollection()
+        {
+            try
+            {
+                const jwtToken = retrieveToken();
+                const response = await fetch(buildPath('api/getcollection'),
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ userId, jwtToken }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const res = JSON.parse(await response.text());
+                const ids = (res.results || []).map((f: Figure) => f._id);
+                setUserCollection(ids);
+            }
+            catch { /* silent fail */ }
+        }
+        if (userId) fetchCollection();
+    }, [userId]);
 
     async function doSearchFigures(): Promise<void>
     {
@@ -342,7 +389,11 @@ function SearchUI()
             const res = JSON.parse(await response.text());
             if (res.jwtToken && res.jwtToken !== '') localStorage.setItem('jwtToken', res.jwtToken);
             if (res.error && res.error !== '') setMessage(res.error);
-            else setMessage('Added to collection!');
+            else
+            {
+                setMessage('Added to collection!');
+                setUserCollection(prev => [...prev, figureId]);
+            }
         }
         catch (error: any) { setMessage(error.toString()); }
     }
@@ -442,23 +493,19 @@ function SearchUI()
         setFilterGames([]);
         setFilterElements([]);
         setFilterTypes([]);
+        setFilterCollected(false);
         setSortAlpha('');
         setSortGame('');
         setSortElement('');
     }
 
-    // normalize game name for comparison (handles minor differences in spacing/punctuation)
-    function normalizeGame(game: string): string
-    {
-        return game.toLowerCase().replace(/[^a-z0-9]/g, '');
-    }
-
-    // apply multi-select filters
+    // apply filters - Game is a number in DB
     let filteredFigures = figureResults.filter(fig =>
     {
-        if (filterGames.length > 0 && !filterGames.some(g => normalizeGame(g) === normalizeGame(fig.Game))) return false;
+        if (filterGames.length > 0 && !filterGames.includes(String(fig.Game))) return false;
         if (filterElements.length > 0 && !filterElements.includes(fig.Element)) return false;
         if (filterTypes.length > 0 && !filterTypes.includes(fig.Type)) return false;
+        if (filterCollected && userCollection.includes(fig._id)) return false;
         return true;
     });
 
@@ -467,19 +514,10 @@ function SearchUI()
     {
         if (sortAlpha === 'asc') return a.Name.localeCompare(b.Name);
         if (sortAlpha === 'desc') return b.Name.localeCompare(a.Name);
-
-        if (sortGame === 'asc' || sortGame === 'desc')
-        {
-            const aIdx = GAMES.findIndex(g => normalizeGame(g) === normalizeGame(a.Game));
-            const bIdx = GAMES.findIndex(g => normalizeGame(g) === normalizeGame(b.Game));
-            const aOrder = aIdx === -1 ? 999 : aIdx;
-            const bOrder = bIdx === -1 ? 999 : bIdx;
-            return sortGame === 'asc' ? aOrder - bOrder : bOrder - aOrder;
-        }
-
+        if (sortGame === 'asc') return a.Game - b.Game;
+        if (sortGame === 'desc') return b.Game - a.Game;
         if (sortElement === 'asc') return ELEMENTS.indexOf(a.Element) - ELEMENTS.indexOf(b.Element);
         if (sortElement === 'desc') return ELEMENTS.indexOf(b.Element) - ELEMENTS.indexOf(a.Element);
-
         return 0;
     });
 
@@ -567,9 +605,32 @@ function SearchUI()
                     <>
                         <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '10px', flexWrap: 'nowrap' }}>
                             <span style={{ color: '#aaa', fontSize: '14px', paddingTop: '10px', whiteSpace: 'nowrap' }}>Filters:</span>
-                            <MultiCheckbox label="Game" options={GAMES} selected={filterGames} onChange={(v) => { setFilterGames(v); setFigurePage(1); }} />
-                            <MultiCheckbox label="Element" options={ELEMENTS} selected={filterElements} onChange={(v) => { setFilterElements(v); setFigurePage(1); }} />
-                            <MultiCheckbox label="Type" options={TYPES} selected={filterTypes} onChange={(v) => { setFilterTypes(v); setFigurePage(1); }} />
+                            <MultiCheckbox
+                                label="Game"
+                                options={GAME_OPTIONS.map(String)}
+                                optionLabels={GAME_OPTIONS.map(n => GAME_MAP[n])}
+                                selected={filterGames}
+                                onChange={(v) => { setFilterGames(v); setFigurePage(1); }}
+                            />
+                            <MultiCheckbox
+                                label="Element"
+                                options={ELEMENTS}
+                                selected={filterElements}
+                                onChange={(v) => { setFilterElements(v); setFigurePage(1); }}
+                            />
+                            <MultiCheckbox
+                                label="Type"
+                                options={TYPES}
+                                selected={filterTypes}
+                                onChange={(v) => { setFilterTypes(v); setFigurePage(1); }}
+                            />
+                            <MultiCheckbox
+                                label="Collected"
+                                options={['hide_collected']}
+                                optionLabels={['Hide Collected']}
+                                selected={filterCollected ? ['hide_collected'] : []}
+                                onChange={(v) => { setFilterCollected(v.includes('hide_collected')); setFigurePage(1); }}
+                            />
                             <button onClick={clearFilters} style={{ ...actionButtonStyle, marginLeft: 'auto' }}>
                                 Clear Filters
                             </button>
@@ -577,21 +638,30 @@ function SearchUI()
 
                         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
                             <span style={{ color: '#aaa', fontSize: '14px' }}>Sort By:</span>
-                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={selectStyle}>
-                                <option value="">Alphabetically ▾</option>
-                                <option value="asc">A → Z</option>
-                                <option value="desc">Z → A</option>
-                            </select>
-                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={selectStyle}>
-                                <option value="">Game ▾</option>
-                                <option value="asc">1st → 6th</option>
-                                <option value="desc">6th → 1st</option>
-                            </select>
-                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={selectStyle}>
-                                <option value="">Element ▾</option>
-                                <option value="asc">Air → Water</option>
-                                <option value="desc">Water → Air</option>
-                            </select>
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={selectStyle}>
+                                    <option value="">Alphabetically</option>
+                                    <option value="asc">A → Z</option>
+                                    <option value="desc">Z → A</option>
+                                </select>
+                                <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#fff' }}>▾</span>
+                            </div>
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={selectStyle}>
+                                    <option value="">Game</option>
+                                    <option value="asc">1st → 6th</option>
+                                    <option value="desc">6th → 1st</option>
+                                </select>
+                                <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#fff' }}>▾</span>
+                            </div>
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={selectStyle}>
+                                    <option value="">Element</option>
+                                    <option value="asc">Air → Water</option>
+                                    <option value="desc">Water → Air</option>
+                                </select>
+                                <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#fff' }}>▾</span>
+                            </div>
                         </div>
                     </>
                 )}
@@ -610,8 +680,11 @@ function SearchUI()
                                         : <div style={{ width: '100%', height: '140px', backgroundColor: '#ccc', borderRadius: '4px' }} />
                                     }
                                     <p style={{ marginTop: '8px', fontSize: '13px', color: '#fff' }}>{fig.Name}</p>
+                                    <p style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{GAME_MAP[fig.Game] || ''}</p>
                                     <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px' }}>
-                                        <button onClick={() => doAddToCollection(fig._id)} style={{ padding: '4px 10px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Col</button>
+                                        <button onClick={() => doAddToCollection(fig._id)} style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                                            {userCollection.includes(fig._id) ? '✓ Col' : '+ Col'}
+                                        </button>
                                         <button onClick={() => doAddToWishlist(fig._id)} style={{ padding: '4px 10px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Wish</button>
                                     </div>
                                 </div>
