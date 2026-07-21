@@ -133,6 +133,10 @@ function Signup()
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
+
+                <p className="input-requirements">
+                     
+                </p>
     
                 <input
                     type="password"
