@@ -21,6 +21,8 @@ interface User
     username: string;
     firstName: string;
     lastName: string;
+    collectionCount?: number;
+    wishlistCount?: number;
 }
 
 const GAMES = [
@@ -45,7 +47,34 @@ const TYPES = [
 
 const ITEMS_PER_PAGE = 16;
 
-// dropdown checkbox style
+// shared button style for Search and Clear Filters
+const actionButtonStyle: React.CSSProperties =
+{
+    padding: '8px 20px',
+    backgroundColor: '#7dd8f8',
+    color: '#0d1b2a',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    whiteSpace: 'nowrap'
+};
+
+// shared dropdown style
+const selectStyle: React.CSSProperties =
+{
+    padding: '10px 10px',
+    borderRadius: '4px',
+    backgroundColor: '#1e3a5f',
+    color: '#fff',
+    border: 'none',
+    width: '140px',
+    fontSize: '14px',
+    cursor: 'pointer'
+};
+
+// dropdown checkbox styles
 const dropdownStyle: React.CSSProperties =
 {
     backgroundColor: '#1e3a5f',
@@ -53,7 +82,7 @@ const dropdownStyle: React.CSSProperties =
     border: 'none',
     color: '#fff',
     padding: '0',
-    minWidth: '180px',
+    width: '140px',
     position: 'relative',
     display: 'inline-block'
 };
@@ -61,7 +90,7 @@ const dropdownStyle: React.CSSProperties =
 const dropdownButtonStyle: React.CSSProperties =
 {
     width: '100%',
-    padding: '8px 12px',
+    padding: '10px 10px',
     backgroundColor: '#1e3a5f',
     color: '#fff',
     border: 'none',
@@ -79,7 +108,7 @@ const dropdownMenuStyle: React.CSSProperties =
     zIndex: 100,
     backgroundColor: '#1e3a5f',
     borderRadius: '4px',
-    minWidth: '180px',
+    minWidth: '140px',
     padding: '8px 0',
     boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
 };
@@ -116,7 +145,7 @@ function MultiCheckbox({ label, options, selected, onChange }: {
         }
     }
 
-    const displayLabel = selected.length > 0 ? `${label} (${selected.length})` : label;
+    const displayLabel = selected.length > 0 ? `${label} (${selected.length}) ▾` : `${label} ▾`;
 
     return (
         <div style={{ ...dropdownStyle }}>
@@ -180,11 +209,7 @@ function SearchUI()
 
         try
         {
-            
-
-            
             const jwtToken = retrieveToken();
-            console.log("Sending token:", jwtToken);
             const obj = { search: searchText, jwtToken };
             const response = await fetch(buildPath('api/searchfigures'),
             {
@@ -241,16 +266,51 @@ function SearchUI()
             {
                 localStorage.setItem('jwtToken', res.jwtToken);
             }
-            
+
             if (res.error && res.error !== '')
             {
                 setMessage(res.error);
                 return;
             }
 
-            setUserResults(res.results || []);
+            // fetch collection and wishlist counts for each user
+            const usersWithCounts = await Promise.all(
+                (res.results || []).map(async (user: User) =>
+                {
+                    try
+                    {
+                        const [colRes, wishRes] = await Promise.all([
+                            fetch(buildPath('api/getcollection'), {
+                                method: 'POST',
+                                body: JSON.stringify({ userId: user.id, jwtToken }),
+                                headers: { 'Content-Type': 'application/json' }
+                            }),
+                            fetch(buildPath('api/getwishlist'), {
+                                method: 'POST',
+                                body: JSON.stringify({ userId: user.id, jwtToken }),
+                                headers: { 'Content-Type': 'application/json' }
+                            })
+                        ]);
 
-            if ((res.results || []).length === 0)
+                        const colData = JSON.parse(await colRes.text());
+                        const wishData = JSON.parse(await wishRes.text());
+
+                        return {
+                            ...user,
+                            collectionCount: (colData.results || []).length,
+                            wishlistCount: (wishData.results || []).length
+                        };
+                    }
+                    catch
+                    {
+                        return { ...user, collectionCount: 0, wishlistCount: 0 };
+                    }
+                })
+            );
+
+            setUserResults(usersWithCounts);
+
+            if (usersWithCounts.length === 0)
             {
                 setMessage('No users found.');
             }
@@ -280,16 +340,12 @@ function SearchUI()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = JSON.parse(await response.text());
-            if (res.jwtToken && res.jwtToken !== '')
-            {
-                localStorage.setItem('jwtToken', res.jwtToken);
-            }
+            if (res.jwtToken && res.jwtToken !== '') localStorage.setItem('jwtToken', res.jwtToken);
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Added to collection!');
         }
         catch (error: any) { setMessage(error.toString()); }
     }
-
 
     async function doAddToWishlist(figureId: string): Promise<void>
     {
@@ -304,10 +360,7 @@ function SearchUI()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = JSON.parse(await response.text());
-            if (res.jwtToken && res.jwtToken !== '')
-            {
-                localStorage.setItem('jwtToken', res.jwtToken);
-            }
+            if (res.jwtToken && res.jwtToken !== '') localStorage.setItem('jwtToken', res.jwtToken);
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Added to wishlist!');
         }
@@ -327,10 +380,7 @@ function SearchUI()
                 headers: { 'Content-Type': 'application/json' }
             });
             const res = JSON.parse(await response.text());
-            if (res.jwtToken && res.jwtToken !== '')
-            {
-                localStorage.setItem('jwtToken', res.jwtToken);
-            }
+            if (res.jwtToken && res.jwtToken !== '') localStorage.setItem('jwtToken', res.jwtToken);
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Friend request sent!');
         }
@@ -371,10 +421,7 @@ function SearchUI()
             });
 
             const res = JSON.parse(await response.text());
-            if (res.jwtToken && res.jwtToken !== '')
-            {
-                localStorage.setItem('jwtToken', res.jwtToken);
-            }
+            if (res.jwtToken && res.jwtToken !== '') localStorage.setItem('jwtToken', res.jwtToken);
             if (res.error && res.error !== '') setMessage(res.error);
             else setMessage('Removed successfully.');
         }
@@ -400,10 +447,16 @@ function SearchUI()
         setSortElement('');
     }
 
+    // normalize game name for comparison (handles minor differences in spacing/punctuation)
+    function normalizeGame(game: string): string
+    {
+        return game.toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
     // apply multi-select filters
     let filteredFigures = figureResults.filter(fig =>
     {
-        if (filterGames.length > 0 && !filterGames.includes(fig.Game)) return false;
+        if (filterGames.length > 0 && !filterGames.some(g => normalizeGame(g) === normalizeGame(fig.Game))) return false;
         if (filterElements.length > 0 && !filterElements.includes(fig.Element)) return false;
         if (filterTypes.length > 0 && !filterTypes.includes(fig.Type)) return false;
         return true;
@@ -414,10 +467,19 @@ function SearchUI()
     {
         if (sortAlpha === 'asc') return a.Name.localeCompare(b.Name);
         if (sortAlpha === 'desc') return b.Name.localeCompare(a.Name);
-        if (sortGame === 'asc') return GAMES.indexOf(a.Game) - GAMES.indexOf(b.Game);
-        if (sortGame === 'desc') return GAMES.indexOf(b.Game) - GAMES.indexOf(a.Game);
+
+        if (sortGame === 'asc' || sortGame === 'desc')
+        {
+            const aIdx = GAMES.findIndex(g => normalizeGame(g) === normalizeGame(a.Game));
+            const bIdx = GAMES.findIndex(g => normalizeGame(g) === normalizeGame(b.Game));
+            const aOrder = aIdx === -1 ? 999 : aIdx;
+            const bOrder = bIdx === -1 ? 999 : bIdx;
+            return sortGame === 'asc' ? aOrder - bOrder : bOrder - aOrder;
+        }
+
         if (sortElement === 'asc') return ELEMENTS.indexOf(a.Element) - ELEMENTS.indexOf(b.Element);
         if (sortElement === 'desc') return ELEMENTS.indexOf(b.Element) - ELEMENTS.indexOf(a.Element);
+
         return 0;
     });
 
@@ -461,14 +523,6 @@ function SearchUI()
         <div style={{ backgroundColor: '#09071d', minHeight: '100vh', color: '#fff' }}>
 
             <ProfileHeader />
-            {/* nav */}
-            {/* <nav style={{ backgroundColor: '#09071d', padding: '10px 48px', borderBottom: '1px solid #1e3a5f', textAlign: 'center' }}>
-                <a href="/profile" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Profile</a>
-                <span style={{ color: '#555', marginRight: '16px' }}>|</span>
-                <a href="/search" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Figures</a>
-                <span style={{ color: '#555', marginRight: '16px' }}>|</span>
-                <a href="/search" onClick={(e) => { e.preventDefault(); setSearchMode('users'); window.history.pushState({}, '', '/search'); }} style={{ color: '#fff', textDecoration: 'none' }}>Users</a>
-            </nav> */}
 
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 48px' }}>
 
@@ -489,7 +543,7 @@ function SearchUI()
                 </div>
 
                 {/* title */}
-                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px'}}>
+                <h2 style={{ color: '#7dd8f8', marginBottom: '20px', textAlign: 'left', fontSize: '48px' }}>
                     {searchMode === 'figures' ? 'Figures' : 'Users'}
                 </h2>
 
@@ -503,10 +557,7 @@ function SearchUI()
                         onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
                         style={{ flex: 1, padding: '8px 12px', borderRadius: '4px', border: '1px solid #1e3a5f', backgroundColor: '#fff', color: '#000', fontSize: '14px' }}
                     />
-                    <button
-                        onClick={handleSearch}
-                        style={{ padding: '8px 20px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                    >
+                    <button onClick={handleSearch} style={actionButtonStyle}>
                         Search
                     </button>
                 </div>
@@ -514,30 +565,30 @@ function SearchUI()
                 {/* figure filters */}
                 {searchMode === 'figures' && (
                     <>
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start', marginBottom: '10px' }}>
-                            <span style={{ color: '#aaa', fontSize: '14px', paddingTop: '8px' }}>Filters:</span>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '10px', flexWrap: 'nowrap' }}>
+                            <span style={{ color: '#aaa', fontSize: '14px', paddingTop: '10px', whiteSpace: 'nowrap' }}>Filters:</span>
                             <MultiCheckbox label="Game" options={GAMES} selected={filterGames} onChange={(v) => { setFilterGames(v); setFigurePage(1); }} />
                             <MultiCheckbox label="Element" options={ELEMENTS} selected={filterElements} onChange={(v) => { setFilterElements(v); setFigurePage(1); }} />
                             <MultiCheckbox label="Type" options={TYPES} selected={filterTypes} onChange={(v) => { setFilterTypes(v); setFigurePage(1); }} />
-                            <button onClick={clearFilters} style={{ padding: '8px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', marginLeft: 'auto' }}>
+                            <button onClick={clearFilters} style={{ ...actionButtonStyle, marginLeft: 'auto' }}>
                                 Clear Filters
                             </button>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
                             <span style={{ color: '#aaa', fontSize: '14px' }}>Sort By:</span>
-                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
-                                <option value="">Alphabetically</option>
+                            <select value={sortAlpha} onChange={e => { setSortAlpha(e.target.value); setSortGame(''); setSortElement(''); setFigurePage(1); }} style={selectStyle}>
+                                <option value="">Alphabetically ▾</option>
                                 <option value="asc">A → Z</option>
                                 <option value="desc">Z → A</option>
                             </select>
-                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
-                                <option value="">Game</option>
+                            <select value={sortGame} onChange={e => { setSortGame(e.target.value); setSortAlpha(''); setSortElement(''); setFigurePage(1); }} style={selectStyle}>
+                                <option value="">Game ▾</option>
                                 <option value="asc">1st → 6th</option>
                                 <option value="desc">6th → 1st</option>
                             </select>
-                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: '#1e3a5f', color: '#fff', border: 'none', minWidth: '180px', fontSize: '14px' }}>
-                                <option value="">Element</option>
+                            <select value={sortElement} onChange={e => { setSortElement(e.target.value); setSortAlpha(''); setSortGame(''); setFigurePage(1); }} style={selectStyle}>
+                                <option value="">Element ▾</option>
                                 <option value="asc">Air → Water</option>
                                 <option value="desc">Water → Air</option>
                             </select>
@@ -574,12 +625,15 @@ function SearchUI()
                 {searchMode === 'users' && paginatedUsers.length > 0 && (
                     <>
                         {paginatedUsers.map(user => (
-                            <div key={user.id} style={{ backgroundColor: '#1e3a5f', borderRadius: '8px', padding: '16px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #2a4a6f' }}>
+                            <div key={user.id} style={{ backgroundColor: '#1e3a5f', borderRadius: '8px', padding: '16px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div>
-                                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#7dd8f8' }}>{user.username}</p>
+                                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#7dd8f8' }}>{user.username}</p>
                                     {(user.firstName || user.lastName) && (
-                                        <p style={{ fontSize: '13px', color: '#aaa' }}>{user.firstName} {user.lastName}</p>
+                                        <p style={{ fontSize: '14px', color: '#aaa', marginTop: '2px' }}>{user.firstName} {user.lastName}</p>
                                     )}
+                                    <p style={{ fontSize: '13px', color: '#ccc', marginTop: '6px' }}>
+                                        Collection: {user.collectionCount ?? '...'} | Wishlist: {user.wishlistCount ?? '...'}
+                                    </p>
                                 </div>
                                 <button onClick={() => doSendFriendRequest(user.id)} style={{ padding: '6px 14px', backgroundColor: '#7dd8f8', color: '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
                                     Add Friend +
