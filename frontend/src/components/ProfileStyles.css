@@ -184,6 +184,7 @@
 .list-row-meta {
     color: #999;
     font-size: 14px;
+    text-align: left;
 }
 
 .list-row-actions {
