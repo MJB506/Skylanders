@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { buildPath } from './Path';
 import { retrieveToken } from '../tokenStorage';
 import ProfileHeader from './ProfileHeader';
@@ -142,7 +143,9 @@ function MultiCheckbox({ label, options, selected, onChange }: {
 
 function SearchUI()
 {
-    const [searchMode, setSearchMode] = useState<'figures' | 'users'>('figures');
+    const [searchParams] = useSearchParams();
+    const initialMode = searchParams.get('mode') === 'users' ? 'users' : 'figures';
+    const [searchMode, setSearchMode] = useState<'figures' | 'users'>(initialMode);
     const [searchText, setSearchText] = useState('');
     const [figureResults, setFigureResults] = useState<Figure[]>([]);
     const [userResults, setUserResults] = useState<User[]>([]);
