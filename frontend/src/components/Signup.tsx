@@ -43,12 +43,12 @@ function Signup()
         }
 
         // Password validation
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{10,}$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{10,}$/;
 
         if (!passwordRegex.test(password))
         {
             setMessage(
-                "Password must be at least 10 characters long, contain one uppercase letter, and one number."
+                "Password must be at least 10 characters long, and contain at least one uppercase letter, one number, and one special character."
             );
             return;
         }
@@ -153,6 +153,8 @@ function Signup()
                     • At least 1 uppercase letter
                     <br />
                     • At least 1 number
+                    <br />
+                    • At least 1 special character
                 </p>
     
                 <input
