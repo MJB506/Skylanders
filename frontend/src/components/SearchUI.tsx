@@ -201,7 +201,7 @@ function SearchUI()
     const [figureResults, setFigureResults] = useState<Figure[]>([]);
     const [userResults, setUserResults] = useState<User[]>([]);
     const [message, setMessage] = useState('');
-    const [userCollection, setUserCollection] = useState<string[]>([]);
+    const [userCollection, setUserCollection] = useState<{id: string, boxed: boolean}[]>([]);
 
     // multi-select filters - games stored as strings of numbers "1","2" etc
     const [filterGames, setFilterGames] = useState<string[]>([]);
@@ -257,8 +257,8 @@ function SearchUI()
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const res = JSON.parse(await response.text());
-                const ids = (res.results || []).map((f: Figure) => f._id);
-                setUserCollection(ids);
+                const items = (res.results || []).map((f: any) => ({ id: f._id, boxed: f.Boxed }));
+                setUserCollection(items);
             }
             catch { /* silent fail */ }
         }
@@ -394,9 +394,9 @@ function SearchUI()
     async function doAddToCollection(figureId: string, boxed: boolean): Promise<void>
     {
         setBoxedDropdownId(null);
-        if (userCollection.includes(figureId))
+        if (userCollection.some(c => c.id === figureId && c.boxed === boxed))
         {
-            setMessage('This figure is already in your collection!');
+            setMessage(`This figure is already in your collection (${boxed ? 'Boxed' : 'Unboxed'})!`);
             return;
         }
         try
@@ -415,7 +415,7 @@ function SearchUI()
             else
             {
                 setMessage(`Added to collection (${boxed ? 'Boxed' : 'Unboxed'})!`);
-                setUserCollection(prev => [...prev, figureId]);
+                setUserCollection(prev => [...prev, { id: figureId, boxed }]);
             }
         }
         catch (error: any) { setMessage(error.toString()); }
@@ -528,7 +528,7 @@ function SearchUI()
         if (filterGames.length > 0 && !filterGames.includes(String(fig.Game))) return false;
         if (filterElements.length > 0 && !filterElements.includes(fig.Element)) return false;
         if (filterTypes.length > 0 && !filterTypes.includes(fig.Type)) return false;
-        if (filterCollected && userCollection.includes(fig._id)) return false;
+        if (filterCollected && userCollection.some(c => c.id === fig._id)) return false;
         return true;
     });
 
@@ -718,9 +718,9 @@ function SearchUI()
                                         <div style={{ position: 'relative' }} ref={boxedDropdownId === fig._id ? boxedDropdownRef : null}>
                                             <button
                                                 onClick={() => setBoxedDropdownId(boxedDropdownId === fig._id ? null : fig._id)}
-                                                style={{ padding: '4px 10px', backgroundColor: userCollection.includes(fig._id) ? '#555' : '#7dd8f8', color: userCollection.includes(fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                                style={{ padding: '4px 10px', backgroundColor: userCollection.some(c => c.id === fig._id) ? '#555' : '#7dd8f8', color: userCollection.some(c => c.id === fig._id) ? '#aaa' : '#0d1b2a', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
                                             >
-                                                {userCollection.includes(fig._id) ? '✓ Col' : '+ Col'}
+                                                {userCollection.some(c => c.id === fig._id) ? '✓ Col' : '+ Col'}
                                             </button>
                                             {boxedDropdownId === fig._id && (
                                                 <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', backgroundColor: '#1e3a5f', borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.4)', zIndex: 200, marginBottom: '4px', minWidth: '110px' }}>
